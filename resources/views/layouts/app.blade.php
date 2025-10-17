@@ -1,36 +1,46 @@
+{{-- resources/views/layouts/app.blade.php --}}
+
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<html lang="en">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+<head>
+    {{-- ... head content ... --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
+</head>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+<body class="font-sans antialiased">
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+    {{-- 1. Inisialisasi Alpine.js di pembungkus paling luar --}}
+    <div class="min-h-screen bg-gray-100" x-data="{ open: true }">
+
+        {{-- 2. Panggil sidebar yang sudah Anda buat --}}
+        @include('layouts.sidebar')
+
+        {{-- 3. Buat wrapper untuk konten utama dengan margin dinamis --}}
+        <div class="flex-1 flex flex-col transition-all duration-300"
+            :class="{ 'md:ml-64': open }">
+
             @include('layouts.navigation')
 
-            <!-- Page Heading -->
-            @isset($header)
-                <header class="bg-white dark:bg-gray-800 shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endisset
+            @if (isset($header))
+            <header class="bg-white shadow">
+                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                    {{ $header }}
+                </div>
+            </header>
+            @endif
 
-            <!-- Page Content -->
             <main>
                 {{ $slot }}
             </main>
+
         </div>
-    </body>
+    </div>
+</body>
+
 </html>
