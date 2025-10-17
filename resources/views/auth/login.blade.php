@@ -51,7 +51,6 @@
                     <div class="bg-red-500 bg-opacity-25 rounded-sm p-2 mt-2 w-max">
                         <p class="text-red-500 text-sm">{{ $message }}</p>
                     </div>
-
                     @enderror
                 </div>
                 <div class="flex items-center justify-between">
