@@ -11,19 +11,23 @@
             display: none !important;
         }
     </style>
+
+    @livewireStyles
 </head>
 
 <body class="font-sans antialiased">
 
     {{-- 1. Inisialisasi Alpine.js di pembungkus paling luar --}}
-    <div class="min-h-screen bg-gray-100" x-data="{ open: true }">
+    <div class="min-h-screen bg-gray-100" x-data="{ sidebarOpen: true }">
 
         {{-- 2. Panggil sidebar yang sudah Anda buat --}}
         @include('layouts.sidebar')
 
         {{-- 3. Buat wrapper untuk konten utama dengan margin dinamis --}}
         <div class="flex-1 flex flex-col transition-all duration-300"
-            :class="{ 'md:ml-64': open }">
+            :class="{ 'md:ml-64': sidebarOpen, 'md:ml-0': !sidebarOpen }">
+
+            {{-- 4. Panggil navigasi atas --}}
 
             @include('layouts.navigation')
 
