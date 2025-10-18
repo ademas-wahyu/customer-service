@@ -1,4 +1,4 @@
-<x-app-layout>
+<div>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('Dashboard') }}
@@ -14,11 +14,4 @@
             </div>
         </div>
     </div>
-
-    {{-- Ini adalah sisa dari komponen Counter yang lupa dihapus --}}
-    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-6">
-        <div class="p-6">
-            <livewire:counter />
-        </div>
-    </div>
-</x-app-layout>
+</div>
