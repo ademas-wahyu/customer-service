@@ -14,4 +14,10 @@
             </div>
         </div>
     </div>
+
+    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-6">
+        <div class="p-6">
+            <livewire:counter />
+        </div>
+    </div>
 </x-app-layout>
