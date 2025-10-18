@@ -2,13 +2,13 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Livewire\Dashboard;
+use App\Livewire\dashboard;
 
-Route::get('/', Dashboard::class)
+Route::get('/', dashboard::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-Route::get('/dashboard', Dashboard::class)
+Route::get('/dashboard', dashboard::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 

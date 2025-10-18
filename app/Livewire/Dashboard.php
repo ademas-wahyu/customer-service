@@ -8,7 +8,7 @@ class Dashboard extends Component
 {
     public function render()
     {
-        return view('Dashboard.index')
+        return view('dashboard.index')
             ->layout('layouts.app');
     }
 }
