@@ -1,4 +1,4 @@
-<aside class="w-64 h-screen bg-gray-800 text-white flex flex-col fixed"
+<aside class="w-64 h-screen bg-white text-gray-700 flex flex-col fixed"
     x-show="open"
     x-transition:enter="transition ease-out duration-300"
     x-transition:enter-start="-translate-x-full"
@@ -9,20 +9,21 @@
     @click.away="open = false"
     x-cloak>
 
-    <div class="h-16 flex items-center justify-center border-b border-gray-700">
-        <h1 class="text-2xl font-bold">Customer Service</h1>
+    <div class="h-16 flex flex-col items-center justify-center border-b border-navy-700">
+        <h1 class="text-sm font-bold">Customer Service</h1>
+        <img src="{{ asset('images/customer-support.png') }}" alt="Logo" class="h-10 ml-2">
     </div>
 
     <nav class="flex-1 px-4 py-4 space-y-2">
-        <a href="{{ route('dashboard') }}" class="flex items-center px-4 py-2 rounded-md hover:bg-gray-700 {{ request()->routeIs('dashboard') ? 'bg-gray-900' : '' }}">
+        <a href="{{ route('dashboard') }}" class="flex items-center px-4 py-2 rounded-md hover:bg-navy-700 {{ request()->routeIs('dashboard') ? 'bg-navy-700 text-white' : '' }}">
             <x-icons.dashboard />
             Dashboard
         </a>
-        <a href="#" class="flex items-center px-4 py-2 rounded-md hover:bg-gray-700">
+        <a href="#" class="flex items-center px-4 py-2 rounded-md hover:bg-navy-700 hover:text-white">
             <x-icons.users />
             Pengguna
         </a>
-        <a href="#" class="flex items-center px-4 py-2 rounded-md hover:bg-gray-700">
+        <a href="#" class="flex items-center px-4 py-2 rounded-md hover:bg-navy-700 hover:text-white">
             <x-icons.settings />
             Pengaturan
         </a>
