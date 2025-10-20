@@ -14,6 +14,9 @@ class Index extends Component
     public float $targetPoin = 14.0;
     public Collection $users;
 
+    public bool $showDetailModal = false;
+    public ?user $selectedUser = null;
+
     public function mount(): void
     {
         $this->users = User::role(['Super Admin', 'Admin'])->get();
@@ -47,6 +50,19 @@ class Index extends Component
 
             return $user;
         });
+    }
+
+    public function showDetail(int $userId): void
+    {
+        $this->selectedUser = $this->users->firstWhere('id', $userId);
+        $this->showDetailModal = true;
+    }
+
+    public function updatingShowDetailModal($value): void
+    {
+        if ($value === false) {
+            $this->reset('selectedUser');
+        }
     }
 
     public function render(): View
