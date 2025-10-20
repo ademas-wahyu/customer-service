@@ -15,7 +15,7 @@ class Index extends Component
     public Collection $users;
 
     public bool $showDetailModal = false;
-    public ?user $selectedUser = null;
+    public ?User $selectedUser = null;
 
     public function mount(): void
     {

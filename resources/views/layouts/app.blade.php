@@ -13,6 +13,7 @@
     </style>
 
     @livewireStyles
+    @livewireScripts
 </head>
 
 <body class="font-sans antialiased">
@@ -46,7 +47,6 @@
         </div>
     </div>
 
-    @livewireScripts
 </body>
 
 </html>

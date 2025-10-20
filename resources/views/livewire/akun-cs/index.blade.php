@@ -57,12 +57,11 @@
                             </div>
                         </div>
                         <div class="p-6 border-t border-gray-200 bg-gray-50">
-                            <button
-                                type="button"
+                            <a href="#"
                                 class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-navy-700 text-base font-medium text-white hover:bg-navy-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-navy-500 sm:text-sm"
-                                wire:click="showDetail({{ $user->id }})">
+                                wire:click.prevent="showDetail({{ $user->id }})">
                                 Detail
-                            </button>
+                            </a>
                         </div>
                     </div>
 
@@ -78,7 +77,7 @@
         </div>
     </div>
 
-    <x-modal :show="$showDetailModal" maxWidth="2xl" name="show-detail-modal">
+    <x-modal wire:model="showDetailModal" maxWidth="2xl">
         @if ($selectedUser)
         <div class="p-6">
             <div class="flex items-center space-x-4">
@@ -126,11 +125,10 @@
                     </div>
                 </div>
             </div>
-
         </div>
 
         <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-            <x-secondary-button @click="$wire.set('showDetailModal', false)">
+            <x-secondary-button wire:click="$set('showDetailModal', false)">
                 Tutup
             </x-secondary-button>
         </div>
