@@ -10,6 +10,8 @@ Aplikasi Customer Service yang dibangun menggunakan Laravel untuk membantu menge
 - Manajemen Profil Pengguna
 - Dashboard untuk Customer Service
 - Manajemen Role dan Permission
+- Komponen interaktif berbasis Livewire untuk alur kerja customer service
+- Kompilasi aset modern menggunakan Vite (Tailwind CSS, Alpine.js, dan Livewire)
 
 ## Prasyarat
 
@@ -64,16 +66,36 @@ Ikuti langkah-langkah berikut untuk menginstal dan menjalankan proyek secara lok
     npm install
     ```
 
+8.  **Buat symlink storage (opsional namun direkomendasikan):**
+    ```bash
+    php artisan storage:link
+    ```
+
+9.  **Siapkan Livewire & Vite:**
+    Pastikan variabel Vite pada `.env` sesuai dengan URL dev server (default: `http://localhost:5173`).
+    ```env
+    VITE_APP_NAME="Customer Service"
+    VITE_DEV_SERVER_URL="http://localhost:5173"
+    ```
+
 ## Pengembangan
 
-Untuk memulai server pengembangan, jalankan perintah berikut. Perintah ini akan menjalankan server PHP, Vite, antrian, dan log secara bersamaan.
+Untuk pengalaman pengembangan Livewire + Vite yang optimal, jalankan perintah berikut pada terminal terpisah:
 
 ```bash
+# Menjalankan server Laravel
+php artisan serve
+
+# Menjalankan dev server Vite & watcher Tailwind
 npm run dev
+
+# (Opsional) Memantau antrian Livewire/broadcast
+php artisan queue:listen
 ```
 
 - Aplikasi akan tersedia di `http://127.0.0.1:8000`.
-- Vite akan memantau perubahan pada file CSS dan JavaScript Anda.
+- Vite akan memantau perubahan pada file CSS, JavaScript, dan komponen Livewire Anda.
+- Untuk membuat komponen Livewire baru, gunakan `php artisan livewire:make Ticket/DetailPanel` lalu impor komponen pada view terkait.
 
 ## Menjalankan Tes
 
@@ -82,6 +104,8 @@ Untuk menjalankan rangkaian tes otomatis (PHPUnit), gunakan perintah berikut:
 ```bash
 php artisan test
 ```
+
+Untuk menguji interaksi Livewire secara manual, Anda juga dapat menjalankan komponen tertentu menggunakan `php artisan livewire:discover` untuk memastikan komponen terdeteksi setelah penambahan baru.
 
 ## Deployment
 
@@ -117,6 +141,20 @@ Berikut adalah panduan umum untuk mendeploy aplikasi ke server produksi:
     Konfigurasikan web server Anda (misalnya Nginx atau Apache) untuk mengarahkan root dokumen ke direktori `public` proyek.
 9.  **Atur Supervisor:**
     Konfigurasikan Supervisor untuk menjalankan proses antrian (`php artisan queue:work`) secara terus-menerus di latar belakang.
+
+10. **Konfigurasi Livewire + Vite di produksi:**
+    Pastikan variabel berikut sudah diatur pada `.env` produksi Anda agar aset Livewire termuat dengan benar.
+    ```env
+    APP_URL="https://app.example.com"
+    ASSET_URL="https://cdn.example.com" # opsional bila memakai CDN
+    LIVEWIRE_URL="https://app.example.com"
+    ```
+
+## Catatan Tambahan
+
+- Jalankan `npm run build` ulang setiap kali ada perubahan pada aset Vite sebelum melakukan deploy.
+- Gunakan `php artisan optimize:clear` bila menemui masalah cache saat mengembangkan komponen Livewire baru.
+- Dokumentasi Livewire resmi: [https://livewire.laravel.com/](https://livewire.laravel.com/).
 
 ## Kontribusi
 
