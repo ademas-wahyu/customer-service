@@ -4,18 +4,45 @@
 
 @php
 $maxWidth = [
-'sm' => 'sm:max-w-sm',
-'md' => 'sm:max-w-md',
-'lg' => 'sm:max-w-lg',
-'xl' => 'sm:max-w-xl',
-'2xl' => 'sm:max-w-2xl',
-][$maxWidth];
+    'sm' => 'sm:max-w-sm',
+    'md' => 'sm:max-w-md',
+    'lg' => 'sm:max-w-lg',
+    'xl' => 'sm:max-w-xl',
+    '2xl' => 'sm:max-w-2xl',
+    '3xl' => 'sm:max-w-3xl',
+][$maxWidth] ?? 'sm:max-w-2xl';
+
+$wireModel = $attributes->wire('model');
+$wireModelName = $wireModel?->value();
+$isLivewireBound = ! is_null($wireModel);
+$modalName = $attributes->get('name');
+$initialShow = (bool) $attributes->get('show');
 @endphp
 
 <div
-    {{-- 1. Ganti 'show: @js($show)' dengan '@entangle' --}}
     x-data="{
-        show: @entangle($attributes->wire('model')), 
+        show: {{ $isLivewireBound ? 'false' : json_encode($initialShow) }},
+        init() {
+            @if ($isLivewireBound && $wireModelName)
+                this.$nextTick(() => {
+                    if (typeof $wire !== 'undefined' && $wire) {
+                        this.show = !!$wire.{{ $wireModelName }};
+                    }
+
+                    this.$watch(() => {
+                        if (typeof $wire !== 'undefined' && $wire) {
+                            return $wire.{{ $wireModelName }};
+                        }
+
+                        return this.show;
+                    }, value => {
+                        if (typeof value !== 'undefined') {
+                            this.show = !!value;
+                        }
+                    });
+                });
+            @endif
+        },
         focusables() {
             // All focusable element types...
             let selector = 'a, button, input:not([type=\'hidden\']), textarea, select, details, [tabindex]:not([tabindex=\'-1\'])'
@@ -38,9 +65,12 @@ $maxWidth = [
             document.body.classList.remove('overflow-y-hidden');
         }
     })"
-    {{-- 2. Hapus listener 'open-modal' dan 'close-modal' karena tidak dipakai lagi --}}
-    x-on:close.stop="show = false"
-    x-on:keydown.escape.window="show = false"
+    @if (! $isLivewireBound)
+        x-on:open-modal.window="if (! $event.detail || '{{ $modalName }}' === $event.detail) show = true"
+        x-on:close-modal.window="if (! $event.detail || '{{ $modalName }}' === $event.detail) show = false"
+    @endif
+    x-on:close.stop="show = false; @if ($isLivewireBound && $wireModelName) $wire.set('{{ $wireModelName }}', false); @endif"
+    x-on:keydown.escape.window="show = false; @if ($isLivewireBound && $wireModelName) $wire.set('{{ $wireModelName }}', false); @endif"
     x-on:keydown.tab.prevent="$event.shiftKey || nextFocusable().focus()"
     x-on:keydown.shift.tab.prevent="prevFocusable().focus()"
     x-show="show"
@@ -50,7 +80,7 @@ $maxWidth = [
     <div
         x-show="show"
         class="fixed inset-0 transform transition-all"
-        x-on:click="show = false"
+        x-on:click="show = false; @if ($isLivewireBound && $wireModelName) $wire.set('{{ $wireModelName }}', false); @endif"
         x-transition:enter="ease-out duration-300"
         x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100"
