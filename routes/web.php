@@ -18,6 +18,8 @@ Route::get('/akun-cs', AkunCsIndex::class)->middleware(['auth'])->name('akun-cs.
 
 Route::get('/pengaturan', PengaturanIndex::class)->middleware(['auth'])->name('pengaturan.index');
 
+Route::get('/rekapan', App\Livewire\Rekapan\Index::class)->middleware(['auth'])->name('rekapan.index');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

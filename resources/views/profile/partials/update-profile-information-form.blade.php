@@ -1,5 +1,5 @@
 <section class="space-y-8">
-    <div class="flex flex-col items-center gap-6 text-center md:flex-row md:items-start md:text-left">
+    <div class="flex flex-col items-center gap-6 text-center md:flex-row md:items-end md:text-left">
         <div class="flex h-24 w-24 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-500 md:h-28 md:w-28">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-12 w-12 md:h-16 md:w-16">
                 <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.75 20.1a8.25 8.25 0 0116.5 0 .75.75 0 01-.75.9h-15a.75.75 0 01-.75-.9z" clip-rule="evenodd" />
@@ -43,16 +43,16 @@
                 <x-input-error class="text-sm text-red-500" :messages="$errors->get('email')" />
 
                 @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
-                    <div class="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-600">
-                        <p>{{ __('Alamat email Anda belum terverifikasi.') }}</p>
-                        <button form="send-verification" class="mt-2 inline-flex items-center text-sm font-medium text-amber-700 underline hover:text-amber-800 focus:outline-none">
-                            {{ __('Kirim ulang tautan verifikasi') }}
-                        </button>
+                <div class="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-600">
+                    <p>{{ __('Alamat email Anda belum terverifikasi.') }}</p>
+                    <button form="send-verification" class="mt-2 inline-flex items-center text-sm font-medium text-amber-700 underline hover:text-amber-800 focus:outline-none">
+                        {{ __('Kirim ulang tautan verifikasi') }}
+                    </button>
 
-                        @if (session('status') === 'verification-link-sent')
-                            <p class="mt-2 font-semibold text-amber-700">{{ __('Tautan verifikasi baru telah dikirimkan ke email Anda.') }}</p>
-                        @endif
-                    </div>
+                    @if (session('status') === 'verification-link-sent')
+                    <p class="mt-2 font-semibold text-amber-700">{{ __('Tautan verifikasi baru telah dikirimkan ke email Anda.') }}</p>
+                    @endif
+                </div>
                 @endif
             </div>
 
@@ -64,13 +64,12 @@
 
         <div class="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-end">
             @if (session('status') === 'profile-updated')
-                <p
-                    x-data="{ show: true }"
-                    x-show="show"
-                    x-transition
-                    x-init="setTimeout(() => show = false, 2500)"
-                    class="text-sm text-green-600"
-                >{{ __('Perubahan berhasil disimpan.') }}</p>
+            <p
+                x-data="{ show: true }"
+                x-show="show"
+                x-transition
+                x-init="setTimeout(() => show = false, 2500)"
+                class="text-sm text-green-600">{{ __('Perubahan berhasil disimpan.') }}</p>
             @endif
 
             <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2">
