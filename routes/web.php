@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Livewire\Dashboard;
-use App\Livewire\AkunCS\Index as AkunCsIndex;
+use App\Livewire\AkunCs\Index as AkunCsIndex;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', Dashboard::class)->middleware(['auth'])->name('dashboard');
