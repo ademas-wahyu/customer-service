@@ -26,7 +26,7 @@
 
     </nav>
     <div class="px-4 py-4">
-        <a href="#" class="flex items-center px-4 py-2 rounded-md hover:bg-navy-700 hover:text-white">
+        <a href="{{ route('pengaturan.index') }}" class="flex items-center px-4 py-2 rounded-md hover:bg-navy-700 hover:text-white {{ request()->routeIs('pengaturan.index') ? 'bg-navy-700 text-white' : '' }}">
             <x-icons.settings />
             Pengaturan
         </a>
