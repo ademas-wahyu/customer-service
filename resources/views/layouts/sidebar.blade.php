@@ -1,12 +1,12 @@
-<aside class="w-64 h-screen bg-white text-gray-700 flex flex-col fixed"
-    x-show="sidebarOpen"
+<aside class="fixed inset-y-0 left-0 z-40 w-64 h-screen bg-white text-gray-700 flex flex-col"
+    x-show="$store.layout.sidebarOpen"
     x-transition:enter="transition ease-out duration-300"
     x-transition:enter-start="-translate-x-full"
     x-transition:enter-end="translate-x-0"
     x-transition:leave="transition ease-in duration-300"
     x-transition:leave-start="translate-x-0"
     x-transition:leave-end="-translate-x-full"
-    @click.away="sidebarOpen = false"
+    @click.away="closeOnMobile()"
     x-cloak>
 
     <div class="h-16 flex flex-col items-center justify-center border-b border-navy-700">
