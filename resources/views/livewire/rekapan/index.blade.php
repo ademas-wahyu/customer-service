@@ -66,7 +66,7 @@
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                                                 {{ $closing['jumlah'] }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                                                {{ $closing['waktu'] }}</td>
+                                                {{ optional($closing->created_at)->translatedFormat('d M Y H:i') }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 @php
                                                     $statusClass = '';
