@@ -43,7 +43,7 @@ class Index extends Component
             ['klien' => 'PT Data 8', 'bisnis' => 'Bisnis', 'produk' => 'SEO', 'jumlah' => 'Rp. 1.000.000', 'waktu' => '18 Maret 2025', 'status' => 'Selesai'],
             ['klien' => 'PT Data 9', 'bisnis' => 'Bisnis', 'produk' => 'Website', 'jumlah' => 'Rp. 2.500.000', 'waktu' => '18 Maret 2025', 'status' => 'Pending'],
             ['klien' => 'PT Data 10', 'bisnis' => 'Bisnis', 'produk' => 'Custom', 'jumlah' => 'Rp. 500.000', 'waktu' => '18 Maret 2025', 'status' => 'Gagal'],
-             ['klien' => 'PT Data 11', 'bisnis' => 'Bisnis', 'produk' => 'Compro', 'jumlah' => 'Rp. 1.500.000', 'waktu' => '18 Maret 2025', 'status' => 'Selesai'],
+            ['klien' => 'PT Data 11', 'bisnis' => 'Bisnis', 'produk' => 'Compro', 'jumlah' => 'Rp. 1.500.000', 'waktu' => '18 Maret 2025', 'status' => 'Selesai'],
             ['klien' => 'PT Data 12', 'bisnis' => 'Bisnis', 'produk' => 'SEO', 'jumlah' => 'Rp. 1.500.000', 'waktu' => '18 Maret 2025', 'status' => 'Selesai'],
             ['klien' => 'PT Data 13', 'bisnis' => 'Bisnis', 'produk' => 'Custom', 'jumlah' => 'Rp. 1.500.000', 'waktu' => '18 Maret 2025', 'status' => 'Gagal'],
             ['klien' => 'PT Data 14', 'bisnis' => 'Bisnis', 'produk' => 'Website', 'jumlah' => 'Rp. 1.500.000', 'waktu' => '18 Maret 2025', 'status' => 'Pending'],
