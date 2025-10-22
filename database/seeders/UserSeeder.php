@@ -10,25 +10,31 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        $headAdmin = User::create([
-            'name' => 'Head Admin',
-            'email' => 'head@vodeco.co.id',
-            'password' => Hash::make('password'),
-        ]);
-        $headAdmin->assignRole('Head Admin');
+        $headAdmin = User::firstOrCreate(
+            ["email" => "head@vodeco.co.id"],
+            [
+                "name" => "Head Admin",
+                "password" => Hash::make("password"),
+            ],
+        );
+        $headAdmin->assignRole("Head Admin");
 
-        $superAdmin = User::create([
-            'name' => 'Super Admin',
-            'email' => 'super@vodeco.co.id',
-            'password' => Hash::make('password'),
-        ]);
-        $superAdmin->assignRole('Super Admin');
+        $superAdmin = User::firstOrCreate(
+            ["email" => "super@vodeco.co.id"],
+            [
+                "name" => "Super Admin",
+                "password" => Hash::make("password"),
+            ],
+        );
+        $superAdmin->assignRole("Super Admin");
 
-        $admin = User::create([
-            'name' => 'Admin',
-            'email' => 'admin@vodeco.co.id',
-            'password' => Hash::make('password'),
-        ]);
-        $admin->assignRole('Admin');
+        $admin = User::firstOrCreate(
+            ["email" => "admin@vodeco.co.id"],
+            [
+                "name" => "Admin",
+                "password" => Hash::make("password"),
+            ],
+        );
+        $admin->assignRole("Admin");
     }
 }

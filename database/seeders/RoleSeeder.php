@@ -13,8 +13,9 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        Role::create(['name' => 'Head Admin']);
-        Role::create(['name' => 'Super Admin']);
-        Role::create(['name' => 'Admin']);
+        // Ini adalah sintaks yang benar, menggunakan string, bukan array
+        Role::findOrCreate("Head Admin");
+        Role::findOrCreate("Super Admin");
+        Role::findOrCreate("Admin");
     }
 }

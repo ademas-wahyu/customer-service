@@ -2,26 +2,20 @@
 
 namespace App\Livewire\Rekapan;
 
+use App\Models\Closing;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
-use Livewire\WithPagination; // 1. Tambahkan use WithPagination
-use Illuminate\Support\Collection;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Livewire\WithPagination;
+use Illuminate\Support\Number;
 
-#[Layout('layouts.app')]
+#[Layout("layouts.app")]
 class Index extends Component
 {
-    // 2. Gunakan trait WithPagination
     use WithPagination;
 
-    // --- Data untuk Kartu ---
-    public $closingHarian = 5;
-    public $closingBulanan = 5;
-    public $rekapitulasi = "15,4 jt";
-
-    // --- Data untuk Tabel ---
-    public $allData = [];
+    public float $closingHarian = 0;
+    public float $closingBulanan = 0;
+    public string $rekapitulasi = "0 jt";
 
     /**
      * mount() dijalankan saat komponen dimuat.
@@ -29,38 +23,21 @@ class Index extends Component
      */
     public function mount()
     {
-        $this->allData = [
-            // Ini adalah 7 data yang terlihat di gambar
-            ['klien' => 'PT Alabama', 'bisnis' => 'Bisnis', 'produk' => 'Website', 'jumlah' => 'Rp. 1.500.000', 'waktu' => '17 Maret 2025', 'status' => 'Selesai'],
-            ['klien' => 'PT Surya', 'bisnis' => 'Bisnis', 'produk' => 'Compro', 'jumlah' => 'Rp. 1.500.000', 'waktu' => '17 Maret 2025', 'status' => 'Gagal'],
-            ['klien' => 'PT Lorem', 'bisnis' => 'Bisnis', 'produk' => 'SEO', 'jumlah' => 'Rp. 1.500.000', 'waktu' => '17 Maret 2025', 'status' => 'Selesai'],
-            ['klien' => 'PT Ipsum', 'bisnis' => 'Bisnis', 'produk' => 'Compro', 'jumlah' => 'Rp. 1.500.000', 'waktu' => '17 Maret 2025', 'status' => 'Pending'],
-            ['klien' => 'PT Dolor', 'bisnis' => 'Bisnis', 'produk' => 'Custom', 'jumlah' => 'Rp. 1.500.000', 'waktu' => '17 Maret 2025', 'status' => 'Selesai'],
-            ['klien' => 'PT Sit Amet', 'bisnis' => 'Bisnis', 'produk' => 'Website', 'jumlah' => 'Rp. 1.500.000', 'waktu' => '17 Maret 2025', 'status' => 'Selesai'],
-            ['klien' => 'PT Alabama', 'bisnis' => 'Bisnis', 'produk' => 'Compro', 'jumlah' => 'Rp. 1.500.000', 'waktu' => '17 Maret 2025', 'status' => 'Selesai'],
+        $this->closingHarian = Closing::where("status", "Selesai")
+            ->whereDate("created_at", today())
+            ->count();
 
-            // 3. Tambahkan data ekstra agar paginasi 2 dan 3 muncul (seperti di gambar)
-            ['klien' => 'PT Data 8', 'bisnis' => 'Bisnis', 'produk' => 'SEO', 'jumlah' => 'Rp. 1.000.000', 'waktu' => '18 Maret 2025', 'status' => 'Selesai'],
-            ['klien' => 'PT Data 9', 'bisnis' => 'Bisnis', 'produk' => 'Website', 'jumlah' => 'Rp. 2.500.000', 'waktu' => '18 Maret 2025', 'status' => 'Pending'],
-            ['klien' => 'PT Data 10', 'bisnis' => 'Bisnis', 'produk' => 'Custom', 'jumlah' => 'Rp. 500.000', 'waktu' => '18 Maret 2025', 'status' => 'Gagal'],
-            ['klien' => 'PT Data 11', 'bisnis' => 'Bisnis', 'produk' => 'Compro', 'jumlah' => 'Rp. 1.500.000', 'waktu' => '18 Maret 2025', 'status' => 'Selesai'],
-            ['klien' => 'PT Data 12', 'bisnis' => 'Bisnis', 'produk' => 'SEO', 'jumlah' => 'Rp. 1.500.000', 'waktu' => '18 Maret 2025', 'status' => 'Selesai'],
-            ['klien' => 'PT Data 13', 'bisnis' => 'Bisnis', 'produk' => 'Custom', 'jumlah' => 'Rp. 1.500.000', 'waktu' => '18 Maret 2025', 'status' => 'Gagal'],
-            ['klien' => 'PT Data 14', 'bisnis' => 'Bisnis', 'produk' => 'Website', 'jumlah' => 'Rp. 1.500.000', 'waktu' => '18 Maret 2025', 'status' => 'Pending'],
-        ];
-    }
+        $this->closingBulanan = Closing::where("status", "Selesai")
+            ->whereMonth("created_at", now()->month)
+            ->whereYear("created_at", now()->year)
+            ->count();
 
-    /**
-     * Fungsi helper untuk paginasi manual dari sebuah array
-     */
-    public function paginate(Collection $items, $perPage = 7, $page = null)
-    {
-        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
-        $items = $items instanceof Collection ? $items : Collection::make($items);
-        return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, [
-            'path' => Paginator::resolveCurrentPath(),
-            'pageName' => 'page',
-        ]);
+        $totalRekap = Closing::where("status", "Selesai")
+            ->whereMonth("created_at", now()->month)
+            ->whereYear("created_at", now()->year)
+            ->sum("jumlah");
+
+        $this->rekapitulasi = Number::format($totalRekap / 1000000, 1) . " jt";
     }
 
     /**
@@ -68,13 +45,10 @@ class Index extends Component
      */
     public function render()
     {
-        // 4. Paginate data, 7 item per halaman
-        $closings = $this->paginate(collect($this->allData), 7);
+        $closings = Closing::latest()->paginate(7);
 
-        // 5. Kirim data $closings ke view
-        //    Data kartu ($closingHarian, dll) otomatis terkirim karena public
-        return view('livewire.rekapan.index', [
-            'closings' => $closings
+        return view("livewire.rekapan.index", [
+            "closings" => $closings,
         ]);
     }
 }
