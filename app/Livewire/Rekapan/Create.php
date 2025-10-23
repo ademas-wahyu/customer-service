@@ -4,6 +4,7 @@ namespace App\Livewire\Rekapan;
 
 use App\Models\Closing;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -41,7 +42,7 @@ class Create extends Component
             'paket' => ['required', 'string', 'max:255'],
             'produk' => ['required', 'string', 'max:255'],
             'jumlah' => ['required', 'numeric', 'min:0'],
-            'status' => ['required', 'string', 'max:255'],
+            'status' => ['required', Rule::in($this->availableStatuses)],
         ];
     }
 
