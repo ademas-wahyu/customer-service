@@ -35,6 +35,7 @@ class ClosingSeeder extends Seeder
             "Warung Ibu",
         ];
         $produkList = ["Website", "Compro", "SEO", "Custom", "Landing Page"];
+        $paketList = ["Basic", "Standard", "Premium", "Enterprise"];
         $statusList = ["Selesai", "Pending", "Gagal"];
 
         for ($i = 0; $i < 50; $i++) {
@@ -46,6 +47,7 @@ class ClosingSeeder extends Seeder
                 "user_id" => $user->id,
                 "klien" => $klienList[array_rand($klienList)],
                 "bisnis" => "Bisnis",
+                "paket" => $paketList[array_rand($paketList)],
                 "produk" => $produkList[array_rand($produkList)],
                 "jumlah" => $jumlah,
                 "poin" =>

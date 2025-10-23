@@ -19,6 +19,7 @@ class Closing extends Model
         "user_id",
         "klien",
         "bisnis",
+        "paket",
         "produk",
         "jumlah",
         "poin",

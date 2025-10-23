@@ -14,6 +14,8 @@ class Create extends Component
 
     public string $bisnis = '';
 
+    public string $paket = '';
+
     public string $produk = '';
 
     public string $jumlah = '';
@@ -36,6 +38,7 @@ class Create extends Component
         return [
             'klien' => ['required', 'string', 'max:255'],
             'bisnis' => ['required', 'string', 'max:255'],
+            'paket' => ['required', 'string', 'max:255'],
             'produk' => ['required', 'string', 'max:255'],
             'jumlah' => ['required', 'numeric', 'min:0'],
             'status' => ['required', 'string', 'max:255'],
@@ -50,6 +53,7 @@ class Create extends Component
             'user_id' => Auth::id(),
             'klien' => $validated['klien'],
             'bisnis' => $validated['bisnis'],
+            'paket' => $validated['paket'],
             'produk' => $validated['produk'],
             'jumlah' => $validated['jumlah'],
             'status' => $validated['status'],
