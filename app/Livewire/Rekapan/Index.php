@@ -37,7 +37,7 @@ class Index extends Component
             ->whereYear("created_at", now()->year)
             ->sum("jumlah");
 
-        $this->rekapitulasi = Number::format($totalRekap / 1000000, 1) . " jt";
+        $this->rekapitulasi = $this->formatRekapitulasi($totalRekap) . " jt";
     }
 
     /**
@@ -50,5 +50,16 @@ class Index extends Component
         return view("livewire.rekapan.index", [
             "closings" => $closings,
         ]);
+    }
+
+    private function formatRekapitulasi(float $totalRekap): string
+    {
+        $nilaiJuta = $totalRekap / 1000000;
+
+        if (extension_loaded("intl")) {
+            return Number::format($nilaiJuta, 1);
+        }
+
+        return number_format($nilaiJuta, 1, ",", ".");
     }
 }
