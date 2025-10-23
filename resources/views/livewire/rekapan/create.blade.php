@@ -33,6 +33,16 @@
                         </div>
 
                         <div>
+                            <label for="paket" class="block text-sm font-medium text-gray-700">Paket</label>
+                            <input type="text" id="paket" wire:model.defer="paket"
+                                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-navy-600 focus:ring-navy-600"
+                                placeholder="Jenis paket">
+                            @error('paket')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
                             <label for="produk" class="block text-sm font-medium text-gray-700">Produk</label>
                             <input type="text" id="produk" wire:model.defer="produk"
                                 class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-navy-600 focus:ring-navy-600"
