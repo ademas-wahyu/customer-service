@@ -5,7 +5,7 @@
             <div class="bg-white p-4 rounded-xl shadow-lg flex justify-between items-center">
                 <div>
                     <p>Closing Harian</p>
-                    <span class="text-4xl text-navy-700 font-medium">5</span>
+                    <span class="text-4xl text-navy-700 font-medium">{{ $closingHarian }}</span>
                 </div>
                 <div class="flex justify-center items-center w-16 h-16 bg-[#E6A900] bg-opacity-25 p-2 rounded-full">
                     <svg viewBox="0 0 46 43" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-10 h-10">
@@ -16,7 +16,7 @@
             <div class="bg-white p-4 rounded-xl shadow-lg flex justify-between items-center">
                 <div>
                     <p>Closing Bulanan</p>
-                    <span class="text-4xl text-navy-700 font-medium">5</span>
+                    <span class="text-4xl text-navy-700 font-medium">{{ $closingBulanan }}</span>
                 </div>
                 <div class="flex justify-center items-center w-16 h-16 bg-[#000080] bg-opacity-25 p-2 rounded-full">
                     <svg viewBox="0 0 46 43" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-10 h-10">
@@ -27,7 +27,7 @@
             <div class="bg-white p-4 rounded-xl shadow-lg flex justify-between items-center">
                 <div>
                     <p>Rekapitulasi</p>
-                    <span class="text-4xl text-navy-700 font-medium">Rp. 20,5Jt</span>
+                    <span class="text-4xl text-navy-700 font-medium">{{ $rekapitulasi }}</span>
                 </div>
                 <div class="flex justify-center items-center w-16 h-16 bg-[#00C707] bg-opacity-25 p-2 rounded-full">
                     <svg viewBox="0 0 46 43" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-10 h-10">

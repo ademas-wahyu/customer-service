@@ -15,7 +15,7 @@ class Index extends Component
 
     public float $closingHarian = 0;
     public float $closingBulanan = 0;
-    public string $rekapitulasi = "0 jt";
+    public string $rekapitulasi = "Rp. 0 Jt";
 
     /**
      * mount() dijalankan saat komponen dimuat.
@@ -37,7 +37,7 @@ class Index extends Component
             ->whereYear("created_at", now()->year)
             ->sum("jumlah");
 
-        $this->rekapitulasi = $this->formatRekapitulasi($totalRekap) . " jt";
+        $this->rekapitulasi = 'Rp. ' . $this->formatRekapitulasi($totalRekap) . ' Jt';
     }
 
     /**
