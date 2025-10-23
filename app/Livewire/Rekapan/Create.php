@@ -4,6 +4,7 @@ namespace App\Livewire\Rekapan;
 
 use App\Models\Closing;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -41,13 +42,17 @@ class Create extends Component
             'paket' => ['required', 'string', 'max:255'],
             'produk' => ['required', 'string', 'max:255'],
             'jumlah' => ['required', 'numeric', 'min:0'],
-            'status' => ['required', 'string', 'max:255'],
+            'status' => ['required', Rule::in($this->availableStatuses)],
         ];
     }
 
     public function save(): void
     {
         $validated = $this->validate();
+
+        $poin = $validated['status'] === 'Selesai'
+            ? (int) round(((float) $validated['jumlah']) / 1_000_000)
+            : 0;
 
         Closing::create([
             'user_id' => Auth::id(),
@@ -57,6 +62,7 @@ class Create extends Component
             'produk' => $validated['produk'],
             'jumlah' => $validated['jumlah'],
             'status' => $validated['status'],
+            'poin' => $poin,
         ]);
 
         session()->flash('status', 'Data closing berhasil ditambahkan.');
