@@ -49,6 +49,10 @@ class Create extends Component
     {
         $validated = $this->validate();
 
+        $poin = $validated['status'] === 'Selesai'
+            ? (int) round(((float) $validated['jumlah']) / 1_000_000)
+            : 0;
+
         Closing::create([
             'user_id' => Auth::id(),
             'klien' => $validated['klien'],
@@ -57,6 +61,7 @@ class Create extends Component
             'produk' => $validated['produk'],
             'jumlah' => $validated['jumlah'],
             'status' => $validated['status'],
+            'poin' => $poin,
         ]);
 
         session()->flash('status', 'Data closing berhasil ditambahkan.');
