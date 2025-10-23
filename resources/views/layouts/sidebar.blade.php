@@ -19,18 +19,21 @@
             <x-icons.dashboard />
             Dashboard
         </a>
-        <a href="{{ route('akun-cs.index') }}" class="flex items-center px-4 py-2 rounded-md hover:bg-navy-700 hover:text-white {{ request()->routeIs('akun-cs.index') ? 'bg-navy-700 text-white' : '' }}">
+        <a href="{{ route('akun-cs.index') }}"
+            class="flex items-center px-4 py-2 rounded-md hover:bg-navy-700 hover:text-white {{ request()->routeIs('akun-cs.index') ? 'bg-navy-700 text-white' : '' }}">
             <x-icons.users />
             Akun CS
         </a>
-        <a href="{{ route('rekapan.index') }}" class="flex items-center px-4 py-2 rounded-md hover:bg-navy-700 hover:text-white {{ request()->routeIs('rekapan.index') ? 'bg-navy-700 text-white' : '' }}">
+        <a href="{{ route('rekapan.index') }}"
+            class="flex items-center px-4 py-2 rounded-md hover:bg-navy-700 hover:text-white {{ request()->routeIs('rekapan.index') ? 'bg-navy-700 text-white' : '' }}">
             <x-icons.clipboard-list />
             Rekapan
         </a>
 
     </nav>
     <div class="px-4 py-4">
-        <a href="{{ route('pengaturan.index') }}" class="flex items-center px-4 py-2 rounded-md hover:bg-navy-700 hover:text-white {{ request()->routeIs('pengaturan.index') ? 'bg-navy-700 text-white' : '' }}">
+        <a href="{{ route('pengaturan.index') }}"
+            class="flex items-center px-4 py-2 rounded-md hover:bg-navy-700 hover:text-white {{ request()->routeIs('pengaturan.index') ? 'bg-navy-700 text-white' : '' }}">
             <x-icons.settings />
             Pengaturan
         </a>
