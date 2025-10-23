@@ -48,6 +48,11 @@
                             <div class="flex justify-between items-center">
                                 <h2 class="text-xl font-semibold text-gray-800">Detail Closingan</h2>
                                 <div class="flex items-center gap-3">
+                                    <a href="{{ route('rekapan.create') }}"
+                                        class="flex items-center gap-2 px-4 py-2 bg-navy-700 text-white rounded-lg text-sm font-medium hover:bg-navy-800 transition">
+                                        <x-icons.clipboard-list />
+                                        <span>Tambah</span>
+                                    </a>
                                     <button
                                         class="flex items-center gap-2 px-4 py-2 bg-navy-700 text-white rounded-lg text-sm font-medium hover:bg-navy-800 transition">
                                         <x-icons.filter />
