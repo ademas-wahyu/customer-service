@@ -2,11 +2,12 @@
 
 namespace App\Livewire\AkunCs;
 
+use App\Models\Closing;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Storage;
-use Livewire\Component;
 use Illuminate\View\View;
+use Livewire\Component;
 
 class Index extends Component
 {
@@ -14,43 +15,77 @@ class Index extends Component
     public float $targetPoin = 14.0;
     public Collection $users;
 
-    protected array $chartLabels = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
+    /**
+     * @var array<int, string>
+     */
+    protected array $chartLabels = [];
+
+    protected Collection $chartPeriod;
 
     public function mount(): void
     {
-        $this->users = User::role(['Super Admin', 'Admin'])->get();
+        $current = now();
+        $periodStart = $current->copy()->subDays(6)->startOfDay();
+        $periodEnd = $current->copy()->endOfDay();
 
-        $this->users = $this->users->map(function ($user) {
-            // Data bohongan untuk statistik
-            $poin = rand(5, 20) + (rand(0, 10) / 10);
-            $closing = rand(10, 50);
-            $waitingList = rand(4, 20);
+        $this->chartPeriod = collect(range(6, 0))->map(
+            fn (int $day) => $current->copy()->subDays($day)->startOfDay()
+        );
 
-            $chartValues = $this->generateChartValues($closing);
+        $this->chartLabels = $this->chartPeriod
+            ->map(fn (Carbon $date) => $this->formatDayLabel($date))
+            ->toArray();
+
+        $this->users = User::role(['Super Admin', 'Admin'])
+            ->withCount([
+                'closings as closing_total' => fn ($query) => $query
+                    ->where('status', 'Selesai')
+                    ->whereBetween('created_at', [$periodStart, $periodEnd]),
+                'closings as waiting_total' => fn ($query) => $query
+                    ->where('status', 'Pending'),
+            ])
+            ->withSum([
+                'closings as poin_total' => fn ($query) => $query
+                    ->where('status', 'Selesai')
+                    ->whereBetween('created_at', [$periodStart, $periodEnd]),
+            ], 'poin')
+            ->get();
+
+        $historyByUser = Closing::query()
+            ->selectRaw(
+                'user_id, DATE(created_at) as closing_date, '
+                . 'COUNT(*) as closing_total, COALESCE(SUM(poin), 0) as poin_total'
+            )
+            ->where('status', 'Selesai')
+            ->whereBetween('created_at', [$periodStart, $periodEnd])
+            ->whereIn('user_id', $this->users->pluck('id'))
+            ->groupBy('user_id', 'closing_date')
+            ->orderBy('closing_date')
+            ->get()
+            ->groupBy('user_id');
+
+        $this->users = $this->users->map(function (User $user) use ($historyByUser) {
+            $history = $historyByUser->get($user->id, collect());
+
+            $chartValues = $this->generateChartValues($this->chartPeriod, $history);
             $chartMeta = $this->buildChartMeta($chartValues);
+
+            $closing = array_sum($chartValues);
+            $poin = round((float) ($user->poin_total ?? 0), 1);
+            $waitingList = (int) ($user->waiting_total ?? 0);
 
             $user->kode_cs = 'CS-' . str_pad($user->id, 3, '0', STR_PAD_LEFT);
             $user->closing = $closing;
             $user->poin = $poin;
             $user->waitingList = $waitingList;
 
-            if ($user->profile_photo_path) {
-                $user->profile_photo_url = Storage::url($user->profile_photo_path);
-            } else {
-                $user->profile_photo_url = null;
-            }
-
-            $percentage = ($this->targetPoin > 0)
+            $percentage = $this->targetPoin > 0
                 ? max(0, min(100, ($user->poin / $this->targetPoin) * 100))
                 : 0;
 
-            $hue = $percentage * 1.2;
-
-            $difference = $user->poin - $this->targetPoin;
-
             $user->poinPercentage = $percentage;
-            $user->poinColorHue = $hue;
-            $user->poinDifference = $difference;
+            $user->poinColorHue = $percentage * 1.2;
+            $user->poinDifference = $user->poin - $this->targetPoin;
             $user->chart = $chartMeta;
 
             return $user;
@@ -64,20 +99,29 @@ class Index extends Component
     }
 
     /**
-     * Membuat nilai acak untuk grafik performa closing.
+     * Menghasilkan nilai grafik berdasarkan histori closing harian.
      *
-     * @param  int  $baseline
+     * @param  \Illuminate\Support\Collection<int, \Carbon\Carbon>  $period
+     * @param  \Illuminate\Support\Collection<int, mixed>  $history
      * @return array<int, int>
      */
-    protected function generateChartValues(int $baseline): array
+    protected function generateChartValues(Collection $period, Collection $history): array
     {
-        $baseline = max(8, $baseline);
+        $historyTotals = $history->mapWithKeys(function ($row) {
+            $dateString = $row->closing_date ?? null;
 
-        return collect($this->chartLabels)
-            ->map(function () use ($baseline) {
-                return max(0, $baseline + rand(-8, 12));
-            })
-            ->toArray();
+            if (! $dateString) {
+                return [];
+            }
+
+            $date = Carbon::parse($dateString);
+
+            return [$date->toDateString() => (int) ($row->closing_total ?? 0)];
+        });
+
+        return $period->map(
+            fn (Carbon $date) => $historyTotals->get($date->toDateString(), 0)
+        )->toArray();
     }
 
     /**
@@ -145,5 +189,22 @@ class Index extends Component
             'min' => $min,
             'average' => round(array_sum($values) / max(1, count($values)), 1),
         ];
+    }
+
+    protected function formatDayLabel(Carbon $date): string
+    {
+        $map = [
+            'Mon' => 'Sen',
+            'Tue' => 'Sel',
+            'Wed' => 'Rab',
+            'Thu' => 'Kam',
+            'Fri' => 'Jum',
+            'Sat' => 'Sab',
+            'Sun' => 'Min',
+        ];
+
+        $abbr = $date->format('D');
+
+        return $map[$abbr] ?? $abbr;
     }
 }
