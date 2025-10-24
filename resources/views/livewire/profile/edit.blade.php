@@ -87,11 +87,11 @@
         <div class="rounded-2xl bg-white px-6 py-8 shadow-md sm:p-10">
             <section>
                 <header>
-                    <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                    <h2 class="text-lg font-medium text-gray-900">
                         {{ __('Update Password') }}
                     </h2>
 
-                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                    <p class="mt-1 text-sm text-gray-600">
                         {{ __('Ensure your account is using a long, random password to stay secure.') }}
                     </p>
                 </header>
@@ -124,7 +124,7 @@
                                 x-show="show"
                                 x-transition
                                 x-init="setTimeout(() => show = false, 2000)"
-                                class="text-sm text-gray-600 dark:text-gray-400"
+                                class="text-sm text-gray-600"
                             >{{ __('Saved.') }}</p>
                         @endif
                     </div>
@@ -135,11 +135,11 @@
         <div class="rounded-2xl bg-white px-6 py-8 shadow-md sm:p-10">
             <section class="space-y-6">
                 <header>
-                    <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                    <h2 class="text-lg font-medium text-gray-900">
                         {{ __('Delete Account') }}
                     </h2>
 
-                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                    <p class="mt-1 text-sm text-gray-600">
                         {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.') }}
                     </p>
                 </header>
@@ -151,11 +151,11 @@
 
                 <x-modal name="confirm-user-deletion" :show="$errors->has('deletePassword')" focusable>
                     <form wire:submit.prevent="deleteAccount" class="p-6">
-                        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        <h2 class="text-lg font-medium text-gray-900">
                             {{ __('Are you sure you want to delete your account?') }}
                         </h2>
 
-                        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                        <p class="mt-1 text-sm text-gray-600">
                             {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.') }}
                         </p>
 
