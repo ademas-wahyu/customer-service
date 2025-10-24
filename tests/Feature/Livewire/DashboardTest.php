@@ -26,7 +26,7 @@ class DashboardTest extends TestCase
 
         $this->get(route('dashboard'))
             ->assertOk()
-            ->assertSee("You're logged in!");
+            ->assertSee('Closing Harian');
 
         Livewire::test(Dashboard::class)
             ->assertStatus(200);

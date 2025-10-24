@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use App\Livewire\Dashboard;
 use App\Livewire\AkunCs\Index as AkunCsIndex;
 use App\Livewire\Pengaturan\Index as PengaturanIndex;
 use App\Livewire\Rekapan\Create as RekapanCreate;
+use App\Livewire\Profile\Edit as ProfileEdit;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', Dashboard::class)->middleware(['auth'])->name('dashboard');
@@ -17,9 +17,7 @@ Route::get('/rekapan', App\Livewire\Rekapan\Index::class)->middleware(['auth'])-
 Route::get('/rekapan/create', RekapanCreate::class)->middleware('auth')->name('rekapan.create');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/profile', ProfileEdit::class)->name('profile.edit');
 });
 
 require __DIR__ . '/auth.php';

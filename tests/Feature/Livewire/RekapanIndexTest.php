@@ -26,7 +26,7 @@ class RekapanIndexTest extends TestCase
 
         $this->get(route('rekapan.index'))
             ->assertOk()
-            ->assertSee('Halaman Rekapan');
+            ->assertSee('Detail Closingan');
 
         Livewire::test(RekapanIndex::class)
             ->assertStatus(200)
