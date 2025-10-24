@@ -22,7 +22,7 @@
         <!-- Right Column with Login Form -->
         <div class="w-[55%] p-8 flex flex-col justify-center">
             <h2 class="text-2xl font-bold text-left">Login</h2>
-            <p class="text-gray-500 text-[16px]">Selamat Datang di Dashboard Customer Service <br>Vodeco</p>
+            <p class="text-gray-500 text-[16px]">Selamat Datang di Overview Customer Service <br>Vodeco</p>
             <form method="POST" action="{{ route('login') }}" class="space-y-4">
                 @csrf
                 <div>
