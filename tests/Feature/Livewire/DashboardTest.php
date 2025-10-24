@@ -26,7 +26,14 @@ class DashboardTest extends TestCase
 
         $this->get(route('dashboard'))
             ->assertOk()
-            ->assertSee('Closing Harian');
+            ->assertSeeTextInOrder([
+                'Total Closingan',
+                'Total Pendapatan',
+                'Customer Baru',
+                'CS Aktif',
+                'Rekapan Closingan Terbaru',
+                'Performa CS',
+            ]);
 
         Livewire::test(Dashboard::class)
             ->assertStatus(200);
