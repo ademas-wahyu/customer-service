@@ -22,6 +22,8 @@ class User extends Authenticatable
      */
     protected $fillable = ["name", "email", "password"];
 
+    protected $appends = ['status'];
+
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -61,5 +63,10 @@ class User extends Authenticatable
     public function closings(): HasMany
     {
         return $this->hasMany(Closing::class);
+    }
+
+    public function getStatusAttribute()
+    {
+        return $this->is_active ? 'Aktif' : 'Tidak Aktif';
     }
 }
