@@ -2,16 +2,13 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="overflow-hidden shadow-lg sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <div>
-                        {{-- Header Halaman (Opsional, sesuaikan jika perlu) --}}
                         {{-- <h1 class="text-3xl font-bold text-indigo-900 mb-6">Dashboard</h1> --}}
 
-                        {{-- Stats Cards (Kode dari Rekapan) --}}
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                            {{-- Card 1: Closing Harian --}}
-                            <div class="bg-white p-6 rounded-lg shadow-sm flex items-center justify-between">
+                            <div class="bg-white p-6 rounded-lg shadow-lg flex items-center justify-between">
                                 <div>
                                     <span class="text-sm font-medium text-gray-500">Closing Harian</span>
                                     <p class="text-3xl font-bold text-gray-800">{{ $closingHarian }}</p>
@@ -20,8 +17,7 @@
                                     <i class="bi bi-cart3 text-2xl text-yellow-600"></i>
                                 </div>
                             </div>
-                            {{-- Card 2: Closing Bulanan --}}
-                            <div class="bg-white p-6 rounded-lg shadow-sm flex items-center justify-between">
+                            <div class="bg-white p-6 rounded-lg shadow-lg flex items-center justify-between">
                                 <div>
                                     <span class="text-sm font-medium text-gray-500">Closing Bulanan</span>
                                     <p class="text-3xl font-bold text-gray-800">{{ $closingBulanan }}</p>
@@ -31,7 +27,7 @@
                                 </div>
                             </div>
                             {{-- Card 3: Rekapitulasi --}}
-                            <div class="bg-white p-6 rounded-lg shadow-sm flex items-center justify-between">
+                            <div class="bg-white p-6 rounded-lg shadow-lg flex items-center justify-between">
                                 <div>
                                     <span class="text-sm font-medium text-gray-500">Rekapitulasi</span>
                                     <p class="text-3xl font-bold text-green-600">Rp. {{ $rekapitulasi }}</p>
@@ -42,11 +38,7 @@
                             </div>
                         </div>
 
-                        {{-- --------------------------------- --}}
-                        {{-- Tabel 1: Rekapan Terbaru         --}}
-                        {{-- --------------------------------- --}}
-                        <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-8"> {{-- Tambah margin-bottom --}}
-                            {{-- Header Tabel Closingan --}}
+                        <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-8"> {{-- Tambah margin-bottom --}}
                             <div class="p-6 flex justify-between items-center">
                                 <h2 class="text-xl font-semibold text-gray-800">Rekapan Closingan Terbaru</h2>
                                 <div class="flex items-center gap-3">
@@ -135,7 +127,7 @@
                         {{-- ================================= --}}
                         {{-- == TABEL 2: PERFORMA CS        == --}}
                         {{-- ================================= --}}
-                        <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
                             {{-- Header Tabel Performa CS (Judul & Search) --}}
                             <div class="p-6 flex flex-col md:flex-row justify-between items-center gap-4">
                                 <h2
@@ -149,7 +141,7 @@
                                         </span>
                                         <input wire:model.live.debounce.300ms="searchPerformance" {{-- Terhubung ke $searchPerformance --}}
                                             type="text" placeholder="Cari Nama CS..." {{-- Placeholder diubah --}}
-                                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-sm shadow-sm">
+                                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-sm shadow-lg">
                                     </div>
                                     {{-- Tombol Tambah Data tidak ada di gambar untuk Performa CS --}}
                                 </div>
