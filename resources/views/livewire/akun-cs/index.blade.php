@@ -1,4 +1,4 @@
-<div x-data="akunCsPage()" x-cloak>
+<div x-data="akunCsPage()" x-cloak @open-create-modal.window="showCreateModal = true">
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
@@ -304,7 +304,7 @@
                 chartGradientId: null,
                 formattedDifference: '',
 
-                showCreateModal: @entangle('showCreateModal').live,
+                showCreateModal: false,
 
                 openDetail(user) {
                     this.selectedUser = user;

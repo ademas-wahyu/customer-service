@@ -144,7 +144,7 @@ class Index extends Component
     {
         $this->form = $this->initForm();
         $this->resetErrorBag();
-        $this->showCreateModal = true;
+        $this->dispatch("openCreateModal");
     }
 
     public function saveUser(): void
