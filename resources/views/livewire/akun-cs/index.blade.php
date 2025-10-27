@@ -304,7 +304,7 @@
                 chartGradientId: null,
                 formattedDifference: '',
 
-                showCreateModal: @entangle('showCreateModal'),
+                showCreateModal: @entangle('showCreateModal').live,
 
                 openDetail(user) {
                     this.selectedUser = user;
