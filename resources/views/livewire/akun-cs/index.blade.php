@@ -1,4 +1,5 @@
 <div x-data="akunCsPage(@entangle('showCreateModal').live)" x-cloak @open-create-modal.window="openCreateModal()"
+
      @close-create-modal.window="closeCreateModal()">
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -320,6 +321,11 @@
                 formattedDifference: '',
 
                 showCreateModal: createModalState ?? false,
+
+                init() {
+                    this.$watch('showModal', value => this.toggleBodyScroll(value));
+                    this.$watch('showCreateModal', value => this.toggleBodyScroll(value));
+                },
 
                 init() {
                     this.$watch('showModal', value => this.toggleBodyScroll(value));
