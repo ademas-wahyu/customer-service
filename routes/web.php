@@ -9,9 +9,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', Dashboard::class)->middleware(['auth'])->name('dashboard');
 
-Route::get('/akun-cs', AkunCsIndex::class)->middleware(['auth'])->name('akun-cs.index');
-
-Route::get('/pengaturan', PengaturanIndex::class)->middleware(['auth'])->name('pengaturan.index');
+Route::middleware(['auth', 'role:Admin|Super Admin'])->group(function () {
+    Route::get('/akun-cs', AkunCsIndex::class)->name('akun-cs.index');
+    Route::get('/pengaturan', PengaturanIndex::class)->name('pengaturan.index');
+});
 
 Route::get('/rekapan', App\Livewire\Rekapan\Index::class)->middleware(['auth'])->name('rekapan.index');
 Route::get('/rekapan/create', RekapanCreate::class)->middleware('auth')->name('rekapan.create');
