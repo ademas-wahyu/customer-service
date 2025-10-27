@@ -77,7 +77,7 @@ class Dashboard extends Component
                 'value' => number_format($customerCurrentMonth, 0, ',', '.'),
                 'trend' => $this->buildTrend($customerCurrentMonth, $customerPreviousMonth),
                 'subtitle' => 'Klien unik bulan ini',
-                'icon' => 'users',
+                'icon' => 'customers',
                 'accent' => 'bg-amber-500/10 text-amber-600',
             ],
             [
