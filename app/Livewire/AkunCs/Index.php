@@ -29,59 +29,73 @@ class Index extends Component
         $periodEnd = $current->copy()->endOfDay();
 
         $this->chartPeriod = collect(range(6, 0))->map(
-            fn (int $day) => $current->copy()->subDays($day)->startOfDay()
+            fn(int $day) => $current->copy()->subDays($day)->startOfDay(),
         );
 
         $this->chartLabels = $this->chartPeriod
-            ->map(fn (Carbon $date) => $this->formatDayLabel($date))
+            ->map(fn(Carbon $date) => $this->formatDayLabel($date))
             ->toArray();
 
-        $this->users = User::role(['Head Admin', 'Super Admin', 'Admin'])
+        $this->users = User::role(["Super Admin", "Admin"])
             ->withCount([
-                'closings as closing_total' => fn ($query) => $query
-                    ->where('status', 'Selesai')
-                    ->whereBetween('created_at', [$periodStart, $periodEnd]),
-                'closings as waiting_total' => fn ($query) => $query
-                    ->where('status', 'Pending'),
+                "closings as closing_total" => fn($query) => $query
+                    ->where("status", "Selesai")
+                    ->whereBetween("created_at", [$periodStart, $periodEnd]),
+                "closings as waiting_total" => fn($query) => $query->where(
+                    "status",
+                    "Pending",
+                ),
             ])
-            ->withSum([
-                'closings as poin_total' => fn ($query) => $query
-                    ->where('status', 'Selesai')
-                    ->whereBetween('created_at', [$periodStart, $periodEnd]),
-            ], 'poin')
+            ->withSum(
+                [
+                    "closings as poin_total" => fn($query) => $query
+                        ->where("status", "Selesai")
+                        ->whereBetween("created_at", [
+                            $periodStart,
+                            $periodEnd,
+                        ]),
+                ],
+                "poin",
+            )
             ->get();
 
         $historyByUser = Closing::query()
             ->selectRaw(
-                'user_id, DATE(created_at) as closing_date, '
-                . 'COUNT(*) as closing_total, COALESCE(SUM(poin), 0) as poin_total'
+                "user_id, DATE(created_at) as closing_date, " .
+                    "COUNT(*) as closing_total, COALESCE(SUM(poin), 0) as poin_total",
             )
-            ->where('status', 'Selesai')
-            ->whereBetween('created_at', [$periodStart, $periodEnd])
-            ->whereIn('user_id', $this->users->pluck('id'))
-            ->groupBy('user_id', 'closing_date')
-            ->orderBy('closing_date')
+            ->where("status", "Selesai")
+            ->whereBetween("created_at", [$periodStart, $periodEnd])
+            ->whereIn("user_id", $this->users->pluck("id"))
+            ->groupBy("user_id", "closing_date")
+            ->orderBy("closing_date")
             ->get()
-            ->groupBy('user_id');
+            ->groupBy("user_id");
 
-        $this->users = $this->users->map(function (User $user) use ($historyByUser) {
+        $this->users = $this->users->map(function (User $user) use (
+            $historyByUser,
+        ) {
             $history = $historyByUser->get($user->id, collect());
 
-            $chartValues = $this->generateChartValues($this->chartPeriod, $history);
+            $chartValues = $this->generateChartValues(
+                $this->chartPeriod,
+                $history,
+            );
             $chartMeta = $this->buildChartMeta($chartValues);
 
             $closing = array_sum($chartValues);
             $poin = round((float) ($user->poin_total ?? 0), 1);
             $waitingList = (int) ($user->waiting_total ?? 0);
 
-            $user->kode_cs = 'CS-' . str_pad($user->id, 3, '0', STR_PAD_LEFT);
+            $user->kode_cs = "CS-" . str_pad($user->id, 3, "0", STR_PAD_LEFT);
             $user->closing = $closing;
             $user->poin = $poin;
             $user->waitingList = $waitingList;
 
-            $percentage = $this->targetPoin > 0
-                ? max(0, min(100, ($user->poin / $this->targetPoin) * 100))
-                : 0;
+            $percentage =
+                $this->targetPoin > 0
+                    ? max(0, min(100, ($user->poin / $this->targetPoin) * 100))
+                    : 0;
 
             $user->poinPercentage = $percentage;
             $user->poinColorHue = $percentage * 1.2;
@@ -94,8 +108,7 @@ class Index extends Component
 
     public function render(): View
     {
-        return view('livewire.akun-cs.index')
-            ->layout('layouts.app');
+        return view("livewire.akun-cs.index")->layout("layouts.app");
     }
 
     /**
@@ -105,12 +118,14 @@ class Index extends Component
      * @param  \Illuminate\Support\Collection<int, mixed>  $history
      * @return array<int, int>
      */
-    protected function generateChartValues(Collection $period, Collection $history): array
-    {
+    protected function generateChartValues(
+        Collection $period,
+        Collection $history,
+    ): array {
         $historyTotals = $history->mapWithKeys(function ($row) {
             $dateString = $row->closing_date ?? null;
 
-            if (! $dateString) {
+            if (!$dateString) {
                 return [];
             }
 
@@ -119,9 +134,14 @@ class Index extends Component
             return [$date->toDateString() => (int) ($row->closing_total ?? 0)];
         });
 
-        return $period->map(
-            fn (Carbon $date) => $historyTotals->get($date->toDateString(), 0)
-        )->toArray();
+        return $period
+            ->map(
+                fn(Carbon $date) => $historyTotals->get(
+                    $date->toDateString(),
+                    0,
+                ),
+            )
+            ->toArray();
     }
 
     /**
@@ -147,63 +167,74 @@ class Index extends Component
 
         $range = max(1, $max - $min);
         $pointCount = count($values);
-        $stepX = $pointCount > 1 ? ($width - ($paddingX * 2)) / ($pointCount - 1) : 0;
+        $stepX =
+            $pointCount > 1 ? ($width - $paddingX * 2) / ($pointCount - 1) : 0;
 
         $points = [];
 
         foreach ($values as $index => $value) {
-            $x = $paddingX + ($stepX * $index);
+            $x = $paddingX + $stepX * $index;
             $normalized = ($value - $min) / $range;
-            $y = ($height - $paddingY) - ($normalized * ($height - ($paddingY * 2)));
+            $y = $height - $paddingY - $normalized * ($height - $paddingY * 2);
 
             $points[] = [
-                'x' => round($x, 2),
-                'y' => round($y, 2),
-                'value' => $value,
+                "x" => round($x, 2),
+                "y" => round($y, 2),
+                "value" => $value,
             ];
         }
 
-        $firstPoint = $points[0] ?? ['x' => $paddingX, 'y' => $height - $paddingY];
+        $firstPoint = $points[0] ?? [
+            "x" => $paddingX,
+            "y" => $height - $paddingY,
+        ];
         $lastPoint = $points[count($points) - 1] ?? $firstPoint;
 
         $segments = array_map(
-            fn (array $point) => $point['x'] . ',' . $point['y'],
-            $points
+            fn(array $point) => $point["x"] . "," . $point["y"],
+            $points,
         );
 
-        $path = 'M ' . implode(' L ', $segments);
-        $area = $path
-            . ' L ' . $lastPoint['x'] . ',' . ($height - $paddingY)
-            . ' L ' . $firstPoint['x'] . ',' . ($height - $paddingY)
-            . ' Z';
+        $path = "M " . implode(" L ", $segments);
+        $area =
+            $path .
+            " L " .
+            $lastPoint["x"] .
+            "," .
+            ($height - $paddingY) .
+            " L " .
+            $firstPoint["x"] .
+            "," .
+            ($height - $paddingY) .
+            " Z";
 
         return [
-            'values' => $values,
-            'labels' => $this->chartLabels,
-            'path' => $path,
-            'area' => $area,
-            'points' => $points,
-            'width' => $width,
-            'height' => $height,
-            'max' => $max,
-            'min' => $min,
-            'average' => round(array_sum($values) / max(1, count($values)), 1),
+            "values" => $values,
+            "labels" => $this->chartLabels,
+            "path" => $path,
+            "area" => $area,
+            "points" => $points,
+            "width" => $width,
+            "height" => $height,
+            "max" => $max,
+            "min" => $min,
+            "average" => round(array_sum($values) / max(1, count($values)), 1),
         ];
     }
 
     protected function formatDayLabel(Carbon $date): string
     {
         $map = [
-            'Mon' => 'Sen',
-            'Tue' => 'Sel',
-            'Wed' => 'Rab',
-            'Thu' => 'Kam',
-            'Fri' => 'Jum',
-            'Sat' => 'Sab',
-            'Sun' => 'Min',
+            "Mon" => "Sen",
+            "Tue" => "Sel",
+            "Wed" => "Rab",
+            "Thu" => "Kam",
+            "Fri" => "Jum",
+            "Sat" => "Sab",
+            "Sun" => "Min",
         ];
 
-        $abbr = $date->format('D');
+        $abbr = $date->format("D");
 
         return $map[$abbr] ?? $abbr;
     }
