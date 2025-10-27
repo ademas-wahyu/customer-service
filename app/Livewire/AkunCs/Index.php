@@ -8,10 +8,12 @@ use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules;
+use Spatie\Permission\Models\Role;
 
 class Index extends Component
 {
-    // PASTIKAN BARIS INI ADA DAN BERNILAI BUKAN 0
     public float $targetPoin = 14.0;
     public Collection $users;
 
@@ -22,8 +24,24 @@ class Index extends Component
 
     protected Collection $chartPeriod;
 
+    public bool $showCreateModal = false;
+    public array $form = [];
+    public array $roles = [];
+
+    /**
+     * Menyiapkan data awal untuk komponen.
+     */
     public function mount(): void
     {
+        $this->form = $this->initForm();
+        $this->roles = Role::whereIn("name", [
+            "Head Admin",
+            "Super Admin",
+            "Admin",
+        ])
+            ->pluck("name", "name")
+            ->all();
+
         $current = now();
         $periodStart = $current->copy()->subDays(6)->startOfDay();
         $periodEnd = $current->copy()->endOfDay();
@@ -111,13 +129,69 @@ class Index extends Component
         return view("livewire.akun-cs.index")->layout("layouts.app");
     }
 
-    /**
-     * Menghasilkan nilai grafik berdasarkan histori closing harian.
-     *
-     * @param  \Illuminate\Support\Collection<int, \Carbon\Carbon>  $period
-     * @param  \Illuminate\Support\Collection<int, mixed>  $history
-     * @return array<int, int>
-     */
+    protected function initForm(): array
+    {
+        return [
+            "name" => "",
+            "email" => "",
+            "role" => "Admin", // Role default
+            "password" => "",
+            "password_confirmation" => "",
+        ];
+    }
+
+    public function create(): void
+    {
+        $this->form = $this->initForm();
+        $this->resetErrorBag();
+        $this->showCreateModal = true;
+    }
+
+    public function saveUser(): void
+    {
+        $this->validate([
+            "form.name" => ["required", "string", "max:255"],
+            "form.email" => [
+                "required",
+                "string",
+                "email",
+                "max:255",
+                "unique:" . User::class . ",email",
+            ],
+            "form.role" => [
+                "required",
+                "string",
+                "exists:" . Role::class . ",name",
+            ],
+            "form.password" => [
+                "required",
+                "string",
+                Rules\Password::defaults(),
+                "confirmed",
+            ],
+        ]);
+
+        $user = User::create([
+            "name" => $this->form["name"],
+            "email" => $this->form["email"],
+            "password" => Hash::make($this->form["password"]),
+            "is_active" => true,
+        ]);
+
+        $user->assignRole($this->form["role"]);
+
+        $this->closeCreateModal();
+
+        $this->redirect(self::class, navigate: true);
+    }
+
+    public function closeCreateModal(): void
+    {
+        $this->showCreateModal = false;
+        $this->form = $this->initForm();
+        $this->resetErrorBag();
+    }
+
     protected function generateChartValues(
         Collection $period,
         Collection $history,
@@ -144,12 +218,6 @@ class Index extends Component
             ->toArray();
     }
 
-    /**
-     * Menghitung data pendukung untuk menggambar grafik di tampilan.
-     *
-     * @param  array<int, int|float>  $values
-     * @return array<string, mixed>
-     */
     protected function buildChartMeta(array $values): array
     {
         $width = 360;

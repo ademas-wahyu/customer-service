@@ -2,9 +2,12 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-        <div class="flex justify-end items-center mb-4">
-            <button class="bg-navy-700 hover:bg-navy-800 text-white font-bold py-2 px-4 rounded" wire:click="create">Tambah Akun</button>
-        </div>
+            <div class="flex justify-end items-center mb-4">
+                {{-- [!!] TOMBOL INI HANYA MENGGUNAKAN wire:click --}}
+                <x-primary-button wire:click="create" class="mr-2 bg-navy-700 hover:bg-navy-800 font-medium">
+                    Tambah Akun
+                </x-primary-button>
+            </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
@@ -100,6 +103,7 @@
 
         <div x-show="showModal" x-transition class="relative w-full max-w-3xl">
             <div class="overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-xl">
+                {{-- ... Konten modal detail (anda sudah punya ini) ... --}}
                 <div class="relative bg-gradient-to-r from-navy-600 via-navy-700 to-navy-800 px-8 py-10 text-white">
                     <div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
                         <div class="flex items-center gap-5">
@@ -212,6 +216,83 @@
             </div>
         </div>
     </div>
+
+    {{-- [!!] MODAL CREATE BARU --}}
+    <div x-show="showCreateModal"
+         @keydown.escape.window="showCreateModal = false"
+         class="fixed inset-0 z-50 flex items-center justify-center px-4 py-6 sm:px-0">
+        <div class="fixed inset-0 bg-gray-900/60" @click="showCreateModal = false"></div>
+
+        <div x-show="showCreateModal" x-transition
+             class="relative w-full max-w-xl bg-white shadow-xl rounded-2xl overflow-hidden">
+
+            {{-- Form di dalam modal --}}
+            <form wire:submit="saveUser">
+                <div class="p-6">
+                    <h3 class="text-lg font-medium text-gray-900">Tambah Akun CS Baru</h3>
+                    <p class="mt-1 text-sm text-gray-600">
+                        Buat akun baru dan tentukan rolenya.
+                    </p>
+
+                    <div class="mt-6 space-y-4">
+                        {{-- Nama --}}
+                        <div>
+                            <x-input-label for="create_name" value="Nama Lengkap" />
+                            <x-text-input wire:model="form.name" id="create_name" type="text" class="mt-1 block w-full" />
+                            <x-input-error :messages="$errors->get('form.name')" class="mt-2" />
+                        </div>
+
+                        {{-- Email --}}
+                        <div>
+                            <x-input-label for="create_email" value="Email" />
+                            <x-text-input wire:model="form.email" id="create_email" type="email" class="mt-1 block w-full" />
+                            <x-input-error :messages="$errors->get('form.email')" class="mt-2" />
+                        </div>
+
+                        {{-- Role --}}
+                        <div>
+                            <x-input-label for="create_role" value="Role" />
+                            <select wire:model="form.role" id="create_role" class="mt-1 block w-full border-gray-300 focus:border-navy-500 focus:ring-navy-500 rounded-md shadow-sm">
+                                <option value="" disabled>Pilih role...</option>
+                                {{-- Loop data roles dari komponen PHP --}}
+                                @foreach($roles as $roleName)
+                                    <option value="{{ $roleName }}">{{ $roleName }}</option>
+                                @endforeach
+                            </select>
+                            <x-input-error :messages="$errors->get('form.role')" class="mt-2" />
+                        </div>
+
+                        {{-- Password --}}
+                        <div>
+                            <x-input-label for="create_password" value="Password" />
+                            <x-text-input wire:model="form.password" id="create_password" type="password" class="mt-1 block w-full" />
+                            <x-input-error :messages="$errors->get('form.password')" class="mt-2" />
+                        </div>
+
+                        {{-- Konfirmasi Password --}}
+                        <div>
+                            <x-input-label for="create_password_confirmation" value="Konfirmasi Password" />
+                            <x-text-input wire:model="form.password_confirmation" id="create_password_confirmation" type="password" class="mt-1 block w-full" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 bg-gray-50 px-6 py-4">
+                    <x-secondary-button type="button" @click="showCreateModal = false">
+                        Batal
+                    </x-secondary-button>
+                    <x-primary-button type="submit">
+                        <span wire:loading.remove wire:target="saveUser">
+                            Simpan User
+                        </span>
+                        <span wire:loading wire:target="saveUser">
+                            Menyimpan...
+                        </span>
+                    </x-primary-button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 @once
@@ -222,6 +303,9 @@
                 selectedUser: null,
                 chartGradientId: null,
                 formattedDifference: '',
+
+                showCreateModal: @entangle('showCreateModal'),
+
                 openDetail(user) {
                     this.selectedUser = user;
                     this.chartGradientId = `chartGradient-${user.id}`;
@@ -234,6 +318,7 @@
                     this.selectedUser = null;
                     this.formattedDifference = '';
                     document.body.classList.remove('overflow-y-hidden');
+
                 },
                 formatNumber(value, decimals = 0) {
                     const formatter = new Intl.NumberFormat('id-ID', {
@@ -244,8 +329,8 @@
                     return formatter.format(value ?? 0);
                 },
                 formatDifference(value) {
-                    const prefix = value > 0 ? '+' : value < 0 ? '-' : '';
-                    return prefix + this.formatNumber(Math.abs(value ?? 0), 1);
+                    const prefix = value > 0 ? '+' : (value < 0 ? '' : ''); // Hapus minus jika tidak diperlukan
+                    return prefix + this.formatNumber(value ?? 0, 1);
                 }
             }));
         });
