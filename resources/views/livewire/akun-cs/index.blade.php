@@ -1,6 +1,4 @@
-<div x-data="akunCsPage(@entangle('showCreateModal').live)" x-cloak @open-create-modal.window="openCreateModal()"
-
-     @close-create-modal.window="closeCreateModal()">
+<div x-data="akunCsPage(@entangle('showCreateModal').live)" x-cloak>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
@@ -324,12 +322,24 @@
 
                 init() {
                     this.$watch('showModal', value => this.toggleBodyScroll(value));
-                    this.$watch('showCreateModal', value => this.toggleBodyScroll(value));
-                },
+                    this.$watch('showCreateModal', value => {
+                        this.toggleBodyScroll(value);
 
-                init() {
-                    this.$watch('showModal', value => this.toggleBodyScroll(value));
-                    this.$watch('showCreateModal', value => this.toggleBodyScroll(value));
+                        if (value) {
+                            this.$nextTick(() => this.$refs.createName?.focus());
+                        }
+                    });
+
+                    const registerLivewireListeners = () => {
+                        window.Livewire.on('open-create-modal', () => this.openCreateModal());
+                        window.Livewire.on('close-create-modal', () => this.closeCreateModal());
+                    };
+
+                    if (window.Livewire?.on) {
+                        registerLivewireListeners();
+                    } else {
+                        document.addEventListener('livewire:init', registerLivewireListeners, { once: true });
+                    }
                 },
 
                 openDetail(user) {
