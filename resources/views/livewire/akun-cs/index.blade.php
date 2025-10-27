@@ -1,4 +1,5 @@
-<div x-data="akunCsPage()" x-cloak @open-create-modal.window="showCreateModal = true">
+<div x-data="akunCsPage()" x-cloak @open-create-modal.window="showCreateModal = true"
+     @close-create-modal.window="showCreateModal = false">
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 

@@ -144,7 +144,7 @@ class Index extends Component
     {
         $this->form = $this->initForm();
         $this->resetErrorBag();
-        $this->dispatch("openCreateModal");
+        $this->dispatch('open-create-modal');
     }
 
     public function saveUser(): void
@@ -190,6 +190,7 @@ class Index extends Component
         $this->showCreateModal = false;
         $this->form = $this->initForm();
         $this->resetErrorBag();
+        $this->dispatch('close-create-modal');
     }
 
     protected function generateChartValues(
