@@ -1,13 +1,21 @@
-<div x-data="akunCsPage()" x-cloak @open-create-modal.window="showCreateModal = true"
-     @close-create-modal.window="showCreateModal = false">
+<div x-data="akunCsPage()" x-cloak @open-create-modal.window="openCreateModal()"
+     @close-create-modal.window="closeCreateModal()">
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            <div class="flex justify-end items-center mb-4">
-                {{-- [!!] TOMBOL INI HANYA MENGGUNAKAN wire:click --}}
-                <x-primary-button wire:click="create" class="mr-2 bg-navy-700 hover:bg-navy-800 font-medium">
-                    Tambah Akun
-                </x-primary-button>
+            <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-6">
+                <div>
+                    <h1 class="text-2xl font-semibold text-gray-900">Daftar Akun CS</h1>
+                    <p class="mt-1 text-sm text-gray-500">Kelola akun tim CS dan pantau performanya dalam satu tempat.</p>
+                </div>
+
+                <div class="flex items-center justify-end gap-3">
+                    <x-primary-button type="button" wire:click="create"
+                        class="inline-flex items-center gap-2 bg-navy-700 hover:bg-navy-800 font-medium px-4 py-2">
+                        <x-icons.plus class="h-5 w-5" aria-hidden="true" />
+                        <span>Tambah Akun</span>
+                    </x-primary-button>
+                </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -219,41 +227,43 @@
     </div>
 
     {{-- [!!] MODAL CREATE BARU --}}
-    <div x-show="showCreateModal"
-         @keydown.escape.window="showCreateModal = false"
+    <div x-show="showCreateModal" x-cloak x-transition.opacity.duration.200ms
+         @keydown.escape.window="$wire.closeCreateModal()"
          class="fixed inset-0 z-50 flex items-center justify-center px-4 py-6 sm:px-0">
-        <div class="fixed inset-0 bg-gray-900/60" @click="showCreateModal = false"></div>
+        <div class="fixed inset-0 bg-gray-900/60" @click="$wire.closeCreateModal()" aria-hidden="true"></div>
 
-        <div x-show="showCreateModal" x-transition
-             class="relative w-full max-w-xl bg-white shadow-xl rounded-2xl overflow-hidden">
+        <div x-show="showCreateModal" x-transition.scale.origin-top duration-200
+             x-trap.noscroll="showCreateModal"
+             class="relative w-full max-w-xl bg-white shadow-xl rounded-2xl overflow-hidden"
+             role="dialog" aria-modal="true" aria-labelledby="create-account-title">
 
             {{-- Form di dalam modal --}}
-            <form wire:submit="saveUser">
+            <form wire:submit="saveUser" class="flex flex-col" x-ref="createForm">
                 <div class="p-6">
-                    <h3 class="text-lg font-medium text-gray-900">Tambah Akun CS Baru</h3>
+                    <h3 id="create-account-title" class="text-lg font-semibold text-gray-900">Tambah Akun CS Baru</h3>
                     <p class="mt-1 text-sm text-gray-600">
-                        Buat akun baru dan tentukan rolenya.
+                        Buat akun baru dan tentukan rolenya sesuai kebutuhan operasional.
                     </p>
 
                     <div class="mt-6 space-y-4">
                         {{-- Nama --}}
                         <div>
                             <x-input-label for="create_name" value="Nama Lengkap" />
-                            <x-text-input wire:model="form.name" id="create_name" type="text" class="mt-1 block w-full" />
+                            <x-text-input x-ref="createName" wire:model.live="form.name" id="create_name" type="text" class="mt-1 block w-full" autocomplete="name" />
                             <x-input-error :messages="$errors->get('form.name')" class="mt-2" />
                         </div>
 
                         {{-- Email --}}
                         <div>
                             <x-input-label for="create_email" value="Email" />
-                            <x-text-input wire:model="form.email" id="create_email" type="email" class="mt-1 block w-full" />
+                            <x-text-input wire:model.live="form.email" id="create_email" type="email" class="mt-1 block w-full" autocomplete="email" />
                             <x-input-error :messages="$errors->get('form.email')" class="mt-2" />
                         </div>
 
                         {{-- Role --}}
                         <div>
                             <x-input-label for="create_role" value="Role" />
-                            <select wire:model="form.role" id="create_role" class="mt-1 block w-full border-gray-300 focus:border-navy-500 focus:ring-navy-500 rounded-md shadow-sm">
+                            <select wire:model.live="form.role" id="create_role" class="mt-1 block w-full border-gray-300 focus:border-navy-500 focus:ring-navy-500 rounded-md shadow-sm">
                                 <option value="" disabled>Pilih role...</option>
                                 {{-- Loop data roles dari komponen PHP --}}
                                 @foreach($roles as $roleName)
@@ -266,28 +276,32 @@
                         {{-- Password --}}
                         <div>
                             <x-input-label for="create_password" value="Password" />
-                            <x-text-input wire:model="form.password" id="create_password" type="password" class="mt-1 block w-full" />
+                            <x-text-input wire:model.live="form.password" id="create_password" type="password" class="mt-1 block w-full" autocomplete="new-password" />
                             <x-input-error :messages="$errors->get('form.password')" class="mt-2" />
                         </div>
 
                         {{-- Konfirmasi Password --}}
                         <div>
                             <x-input-label for="create_password_confirmation" value="Konfirmasi Password" />
-                            <x-text-input wire:model="form.password_confirmation" id="create_password_confirmation" type="password" class="mt-1 block w-full" />
+                            <x-text-input wire:model.live="form.password_confirmation" id="create_password_confirmation" type="password" class="mt-1 block w-full" autocomplete="new-password" />
                         </div>
                     </div>
                 </div>
 
-                <div class="flex justify-end gap-3 bg-gray-50 px-6 py-4">
-                    <x-secondary-button type="button" @click="showCreateModal = false">
+                <div class="flex flex-col-reverse gap-3 bg-gray-50 px-6 py-4 sm:flex-row sm:justify-end">
+                    <x-secondary-button type="button" @click="$wire.closeCreateModal()">
                         Batal
                     </x-secondary-button>
-                    <x-primary-button type="submit">
+                    <x-primary-button type="submit" class="inline-flex items-center justify-center gap-2">
                         <span wire:loading.remove wire:target="saveUser">
                             Simpan User
                         </span>
-                        <span wire:loading wire:target="saveUser">
-                            Menyimpan...
+                        <span wire:loading wire:target="saveUser" class="inline-flex items-center gap-2">
+                            <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                            </svg>
+                            <span>Menyimpan...</span>
                         </span>
                     </x-primary-button>
                 </div>
@@ -307,6 +321,11 @@
 
                 showCreateModal: false,
 
+                init() {
+                    this.$watch('showModal', value => this.toggleBodyScroll(value));
+                    this.$watch('showCreateModal', value => this.toggleBodyScroll(value));
+                },
+
                 openDetail(user) {
                     this.selectedUser = user;
                     this.chartGradientId = `chartGradient-${user.id}`;
@@ -318,8 +337,14 @@
                     this.showModal = false;
                     this.selectedUser = null;
                     this.formattedDifference = '';
-                    document.body.classList.remove('overflow-y-hidden');
-
+                    this.toggleBodyScroll(false);
+                },
+                openCreateModal() {
+                    this.showCreateModal = true;
+                    this.$nextTick(() => this.$refs.createName?.focus());
+                },
+                closeCreateModal() {
+                    this.showCreateModal = false;
                 },
                 formatNumber(value, decimals = 0) {
                     const formatter = new Intl.NumberFormat('id-ID', {
@@ -332,6 +357,14 @@
                 formatDifference(value) {
                     const prefix = value > 0 ? '+' : (value < 0 ? '' : ''); // Hapus minus jika tidak diperlukan
                     return prefix + this.formatNumber(value ?? 0, 1);
+                },
+                toggleBodyScroll(value) {
+                    if (value || this.showModal || this.showCreateModal) {
+                        document.body.classList.add('overflow-y-hidden');
+                        return;
+                    }
+
+                    document.body.classList.remove('overflow-y-hidden');
                 }
             }));
         });
