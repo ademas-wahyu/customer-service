@@ -1,4 +1,5 @@
-<div x-data="akunCsPage()" x-cloak @open-create-modal.window="openCreateModal()"
+<div x-data="akunCsPage(@entangle('showCreateModal').live)" x-cloak @open-create-modal.window="openCreateModal()"
+
      @close-create-modal.window="closeCreateModal()">
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -313,13 +314,18 @@
 @once
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('akunCsPage', () => ({
+            Alpine.data('akunCsPage', (createModalState) => ({
                 showModal: false,
                 selectedUser: null,
                 chartGradientId: null,
                 formattedDifference: '',
 
-                showCreateModal: false,
+                showCreateModal: createModalState ?? false,
+
+                init() {
+                    this.$watch('showModal', value => this.toggleBodyScroll(value));
+                    this.$watch('showCreateModal', value => this.toggleBodyScroll(value));
+                },
 
                 init() {
                     this.$watch('showModal', value => this.toggleBodyScroll(value));
@@ -345,6 +351,7 @@
                 },
                 closeCreateModal() {
                     this.showCreateModal = false;
+                    this.toggleBodyScroll(false);
                 },
                 formatNumber(value, decimals = 0) {
                     const formatter = new Intl.NumberFormat('id-ID', {
