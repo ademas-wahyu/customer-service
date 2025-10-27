@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', Dashboard::class)->middleware(['auth'])->name('dashboard');
 
-Route::middleware(['auth', 'role:Admin|Super Admin'])->group(function () {
+Route::middleware(['auth', 'role:Head Admin|Admin|Super Admin'])->group(function () {
     Route::get('/akun-cs', AkunCsIndex::class)->name('akun-cs.index');
     Route::get('/pengaturan', PengaturanIndex::class)->name('pengaturan.index');
 });
