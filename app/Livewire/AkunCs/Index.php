@@ -36,7 +36,7 @@ class Index extends Component
             ->map(fn (Carbon $date) => $this->formatDayLabel($date))
             ->toArray();
 
-        $this->users = User::role(['Super Admin', 'Admin'])
+        $this->users = User::role(['Head Admin', 'Super Admin', 'Admin'])
             ->withCount([
                 'closings as closing_total' => fn ($query) => $query
                     ->where('status', 'Selesai')
