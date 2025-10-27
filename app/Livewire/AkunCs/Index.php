@@ -144,6 +144,7 @@ class Index extends Component
     {
         $this->form = $this->initForm();
         $this->resetErrorBag();
+        $this->showCreateModal = true;
         $this->dispatch('open-create-modal');
     }
 
