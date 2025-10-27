@@ -3,6 +3,7 @@
 namespace App\Livewire\Pengaturan;
 
 use App\Models\Setting;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -10,6 +11,8 @@ use Livewire\Component;
 #[Layout('layouts.app')]
 class Index extends Component
 {
+    use AuthorizesRequests;
+
     /**
      * Daftar pengaturan yang akan ditampilkan per bagian.
      *
@@ -31,6 +34,8 @@ class Index extends Component
 
     public function mount(): void
     {
+        $this->authorize('manage-settings');
+
         $settings = Setting::query()
             ->orderBy('section')
             ->orderBy('sort')
@@ -69,6 +74,8 @@ class Index extends Component
 
     public function updatedForm($value, $key): void
     {
+        $this->authorize('manage-settings');
+
         $this->persistSetting($key, $value);
 
         $this->lastSavedKey = $key;
@@ -83,6 +90,8 @@ class Index extends Component
 
     protected function persistSetting(string $key, $value): void
     {
+        $this->authorize('manage-settings');
+
         $setting = Setting::query()->where('key', $key)->first();
 
         if (! $setting) {
