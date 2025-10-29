@@ -107,10 +107,10 @@
         </div>
     </div>
 
-    <div x-show="showModal" class="fixed inset-0 z-50 flex items-center justify-center px-4 py-6 sm:px-0">
+    <div x-show="showModal" class="fixed inset-0 z-50 flex items-center justify-center px-4 py-12 sm:px-0 sm:py-16">
         <div class="fixed inset-0 bg-gray-900/60" @click="closeModal"></div>
 
-        <div x-show="showModal" x-transition class="relative w-full max-w-3xl">
+        <div x-show="showModal" x-transition class="relative w-full max-w-3xl max-h-screen overflow-y-auto">
             <div class="overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-xl">
                 {{-- ... Konten modal detail (anda sudah punya ini) ... --}}
                 <div class="relative bg-gradient-to-r from-navy-600 via-navy-700 to-navy-800 px-8 py-10 text-white">
@@ -143,7 +143,7 @@
                     <div class="pointer-events-none absolute -bottom-20 -right-16 h-52 w-52 rounded-full bg-white/10 blur-3xl"></div>
                 </div>
 
-                <div class="-mt-10 space-y-8 px-8 pb-10">
+                <div class="space-y-8 px-8 pb-10 pt-10">
                     @if (auth()->user()?->hasRole('Head Admin'))
                         <div class="rounded-2xl border border-gray-100 bg-white px-5 py-5 shadow-sm">
                             <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
