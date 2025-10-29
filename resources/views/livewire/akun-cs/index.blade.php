@@ -79,6 +79,8 @@
                                     'poin' => $user->poin,
                                     'poinDifference' => $user->poinDifference,
                                     'waitingList' => $user->waitingList,
+                                    'status' => $user->status,
+                                    'is_active' => (bool) $user->is_active,
                                     'profile_photo_url' => $user->profile_photo_url,
                                     'chart' => $user->chart,
                                 ];
@@ -86,7 +88,7 @@
 
                             <button type="button"
                                 class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-navy-700 text-base font-medium text-white hover:bg-navy-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-navy-500 sm:text-sm"
-                                @click="openDetail(@js($modalUser))">
+                                @click="$wire.set('selectedUserId', {{ $user->id }}); openDetail(@js($modalUser))">
                                 Detail
                             </button>
                         </div>
@@ -213,7 +215,17 @@
                         </div>
                     </template>
 
-                    <div class="flex justify-end pt-2">
+                    <div class="flex justify-end gap-3 pt-2">
+                        <template x-if="selectedUser?.is_active">
+                            <x-danger-button
+                                wire:click="toggleActive({{ $selectedUserId ?? 0 }})"
+                                wire:loading.attr="disabled"
+                                wire:target="toggleActive"
+                                x-text="selectedUser?.status === 'Aktif' ? 'Nonaktifkan Akun' : 'Perbarui Status'"
+                                class="inline-flex items-center justify-center">
+                            </x-danger-button>
+                        </template>
+
                         <x-secondary-button @click="closeModal">
                             Tutup
                         </x-secondary-button>
@@ -247,6 +259,7 @@
                     this.showModal = false;
                     this.selectedUser = null;
                     this.formattedDifference = '';
+                    this.$wire.set('selectedUserId', null);
                     this.toggleBodyScroll(false);
                 },
                 formatNumber(value, decimals = 0) {

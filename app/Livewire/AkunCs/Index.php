@@ -4,6 +4,7 @@ namespace App\Livewire\AkunCs;
 
 use App\Models\Closing;
 use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
@@ -13,6 +14,8 @@ class Index extends Component
 {
     public float $targetPoin = 14.0;
     public Collection $users;
+    public bool $isLoading = false;
+    public ?int $selectedUserId = null;
 
     /**
      * @var array<int, string>
@@ -26,6 +29,40 @@ class Index extends Component
      */
     public function mount(): void
     {
+        $this->rebuildUsers();
+    }
+
+    public function render(): View
+    {
+        return view("livewire.akun-cs.index")->layout("layouts.app");
+    }
+
+    public function toggleActive(int $userId): void
+    {
+        if (!auth()->user()?->hasRole("Head Admin")) {
+            throw new AuthorizationException();
+        }
+
+        if ($userId <= 0) {
+            return;
+        }
+
+        $this->isLoading = true;
+
+        try {
+            $user = User::role(["Super Admin", "Admin"])->findOrFail($userId);
+
+            $user->is_active = ! (bool) $user->is_active;
+            $user->save();
+
+            $this->rebuildUsers();
+        } finally {
+            $this->isLoading = false;
+        }
+    }
+
+    protected function rebuildUsers(): void
+    {
         $current = now();
         $periodStart = $current->copy()->subDays(6)->startOfDay();
         $periodEnd = $current->copy()->endOfDay();
@@ -38,7 +75,7 @@ class Index extends Component
             ->map(fn(Carbon $date) => $this->formatDayLabel($date))
             ->toArray();
 
-        $this->users = User::role(["Super Admin", "Admin"])
+        $users = User::role(["Super Admin", "Admin"])
             ->withCount([
                 "closings as closing_total" => fn($query) => $query
                     ->where("status", "Selesai")
@@ -68,13 +105,13 @@ class Index extends Component
             )
             ->where("status", "Selesai")
             ->whereBetween("created_at", [$periodStart, $periodEnd])
-            ->whereIn("user_id", $this->users->pluck("id"))
+            ->whereIn("user_id", $users->pluck("id"))
             ->groupBy("user_id", "closing_date")
             ->orderBy("closing_date")
             ->get()
             ->groupBy("user_id");
 
-        $this->users = $this->users->map(function (User $user) use (
+        $this->users = $users->map(function (User $user) use (
             $historyByUser,
         ) {
             $history = $historyByUser->get($user->id, collect());
@@ -106,11 +143,6 @@ class Index extends Component
 
             return $user;
         });
-    }
-
-    public function render(): View
-    {
-        return view("livewire.akun-cs.index")->layout("layouts.app");
     }
 
     protected function generateChartValues(
