@@ -142,4 +142,45 @@ class AkunCsIndexTest extends TestCase
             Carbon::setTestNow();
         }
     }
+
+    public function test_head_admin_can_toggle_user_active_status(): void
+    {
+        $headAdmin = User::factory()->create();
+        $headAdmin->assignRole('Head Admin');
+
+        $targetUser = User::factory()->create([
+            'is_active' => true,
+        ]);
+        $targetUser->assignRole('Admin');
+
+        $this->actingAs($headAdmin);
+
+        Livewire::test(AkunCsIndex::class)
+            ->call('toggleActive', $targetUser->id)
+            ->assertSet('isLoading', false);
+
+        $this->assertFalse((bool) $targetUser->fresh()->is_active);
+    }
+
+    public function test_non_head_admin_cannot_toggle_user_active_status(): void
+    {
+        $superAdmin = User::factory()->create();
+        $superAdmin->assignRole('Super Admin');
+
+        $targetUser = User::factory()->create([
+            'is_active' => true,
+        ]);
+        $targetUser->assignRole('Admin');
+
+        $this->actingAs($superAdmin);
+
+        $this->assertTrue(auth()->user()->hasRole('Super Admin'));
+        $this->assertFalse(auth()->user()->hasRole('Head Admin'));
+
+        Livewire::test(AkunCsIndex::class)
+            ->call('toggleActive', $targetUser->id)
+            ->assertStatus(403);
+
+        $this->assertTrue((bool) $targetUser->fresh()->is_active);
+    }
 }
