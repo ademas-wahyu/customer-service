@@ -1,15 +1,15 @@
 <div class="py-10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <section class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             @foreach ($statCards as $card)
                 <article
                     class="bg-white border border-gray-100 rounded-3xl shadow-sm p-6 flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
                     <div class="space-y-3">
-                        <div class="text-[19px] font-medium text-gray-500">{{ $card['title'] }}</div>
-                        <div class="text-[34px] font-semibold text-gray-900">{{ $card['value'] }}</div>
+                        <div class="text-[16px] font-medium text-gray-500">{{ $card['title'] }}</div>
+                        <div class="text-[18px] font-semibold text-gray-900">{{ $card['value'] }}</div>
                         <div class="text-[16px] text-gray-400">{{ $card['subtitle'] }}</div>
                         <div
-                            class="flex items-center gap-2 text-sm
+                            class="flex items-center text-[12px] gap-2 text-sm
                             @switch($card['trend']['direction'])
                                 @case('down') text-rose-200 @break
                                 @case('flat') text-gray-400 @break
