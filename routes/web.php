@@ -1,7 +1,8 @@
 <?php
 
-use App\Livewire\Dashboard;
+use App\Livewire\AkunCs\Create as AkunCsCreate;
 use App\Livewire\AkunCs\Index as AkunCsIndex;
+use App\Livewire\Dashboard;
 use App\Livewire\Pengaturan\Index as PengaturanIndex;
 use App\Livewire\Rekapan\Create as RekapanCreate;
 use App\Livewire\Profile\Edit as ProfileEdit;
@@ -12,6 +13,10 @@ Route::get('/', Dashboard::class)->middleware(['auth'])->name('dashboard');
 Route::middleware(['auth', 'role:Head Admin|Admin|Super Admin'])->group(function () {
     Route::get('/akun-cs', AkunCsIndex::class)->name('akun-cs.index');
 });
+
+Route::get('/akun-cs/create', AkunCsCreate::class)
+    ->middleware(['auth', 'role:Head Admin|Super Admin'])
+    ->name('akun-cs.create');
 
 Route::get('/pengaturan', PengaturanIndex::class)
     ->middleware('auth')

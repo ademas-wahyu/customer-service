@@ -16,7 +16,7 @@
             Overview
         </a>
         <a href="{{ route('akun-cs.index') }}"
-            class="flex items-center px-4 py-2 rounded-md hover:bg-navy-700 hover:text-white {{ request()->routeIs('akun-cs.index') ? 'bg-navy-700 text-white' : '' }}">
+            class="flex items-center px-4 py-2 rounded-md hover:bg-navy-700 hover:text-white {{ request()->routeIs('akun-cs.*') ? 'bg-navy-700 text-white' : '' }}">
             <x-icons.users />
             Akun CS
         </a>
