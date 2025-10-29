@@ -75,6 +75,7 @@
                                     'id' => $user->id,
                                     'name' => $user->name,
                                     'kode_cs' => $user->kode_cs,
+                                    'role' => optional($user->roles->first())->name,
                                     'closing' => $user->closing,
                                     'poin' => $user->poin,
                                     'poinDifference' => $user->poinDifference,
@@ -143,6 +144,43 @@
                 </div>
 
                 <div class="-mt-10 space-y-8 px-8 pb-10">
+                    @if (auth()->user()?->hasRole('Head Admin'))
+                        <div class="rounded-2xl border border-gray-100 bg-white px-5 py-5 shadow-sm">
+                            <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-500">Role Pengguna</p>
+                                    <p class="mt-1 text-lg font-semibold text-gray-900" x-text="selectedUser?.role ?? 'Tidak diketahui'"></p>
+                                </div>
+
+                                <div class="flex flex-wrap gap-2">
+                                    <button type="button"
+                                        class="rounded-lg border px-4 py-2 text-sm font-semibold transition"
+                                        :class="selectedUser?.role === 'Admin'
+                                            ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
+                                            : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'"
+                                        :disabled="selectedUser?.role === 'Admin'"
+                                        wire:loading.attr="disabled"
+                                        wire:target="updateRole"
+                                        @click="changeRole('Admin')">
+                                        Jadikan Admin
+                                    </button>
+
+                                    <button type="button"
+                                        class="rounded-lg border px-4 py-2 text-sm font-semibold transition"
+                                        :class="selectedUser?.role === 'Super Admin'
+                                            ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
+                                            : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'"
+                                        :disabled="selectedUser?.role === 'Super Admin'"
+                                        wire:loading.attr="disabled"
+                                        wire:target="updateRole"
+                                        @click="changeRole('Super Admin')">
+                                        Jadikan Super Admin
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
                     <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
                         <div class="rounded-2xl border border-gray-100 bg-white px-5 py-5 shadow-sm">
                             <p class="text-sm font-medium text-gray-500">Total Closingan</p>
@@ -273,6 +311,20 @@
                 formatDifference(value) {
                     const prefix = value > 0 ? '+' : (value < 0 ? '' : ''); // Hapus minus jika tidak diperlukan
                     return prefix + this.formatNumber(value ?? 0, 1);
+                },
+                changeRole(role) {
+                    if (!this.selectedUser?.id) {
+                        return;
+                    }
+
+                    const message = `Ubah role ${this.selectedUser.name} menjadi ${role}?`;
+
+                    if (!confirm(message)) {
+                        return;
+                    }
+
+                    this.$wire.updateRole(this.selectedUser.id, role);
+                    this.selectedUser.role = role;
                 },
                 toggleBodyScroll(value) {
                     if (value || this.showModal) {

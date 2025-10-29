@@ -8,6 +8,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
 class Index extends Component
@@ -76,6 +77,7 @@ class Index extends Component
             ->toArray();
 
         $users = User::role(["Super Admin", "Admin"])
+            ->with("roles")
             ->withCount([
                 "closings as closing_total" => fn($query) => $query
                     ->where("status", "Selesai")
@@ -143,6 +145,43 @@ class Index extends Component
 
             return $user;
         });
+    }
+
+    public function updateRole(int $userId, string $role): void
+    {
+        if (!auth()->user()?->hasRole("Head Admin")) {
+            throw new AuthorizationException();
+        }
+
+        $normalizedRole = trim($role);
+
+        if (!in_array($normalizedRole, ["Admin", "Super Admin"], true)) {
+            throw ValidationException::withMessages([
+                "role" => __("Role tidak valid."),
+            ]);
+        }
+
+        if ($userId <= 0) {
+            throw ValidationException::withMessages([
+                "user" => __("Pengguna tidak valid."),
+            ]);
+        }
+
+        $this->isLoading = true;
+
+        try {
+            $user = User::role(["Super Admin", "Admin"])->findOrFail($userId);
+
+            if ($user->hasRole($normalizedRole)) {
+                return;
+            }
+
+            $user->syncRoles([$normalizedRole]);
+
+            $this->rebuildUsers();
+        } finally {
+            $this->isLoading = false;
+        }
     }
 
     protected function generateChartValues(

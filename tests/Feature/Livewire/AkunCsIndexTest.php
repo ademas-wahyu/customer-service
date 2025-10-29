@@ -183,4 +183,49 @@ class AkunCsIndexTest extends TestCase
 
         $this->assertTrue((bool) $targetUser->fresh()->is_active);
     }
+
+    public function test_head_admin_can_update_role_between_admin_and_super_admin(): void
+    {
+        $headAdmin = User::factory()->create();
+        $headAdmin->assignRole('Head Admin');
+
+        $targetUser = User::factory()->create();
+        $targetUser->assignRole('Admin');
+
+        $this->actingAs($headAdmin);
+
+        $component = Livewire::test(AkunCsIndex::class);
+
+        $component
+            ->call('updateRole', $targetUser->id, 'Super Admin')
+            ->assertSet('isLoading', false);
+
+        $this->assertTrue($targetUser->fresh()->hasRole('Super Admin'));
+
+        $component
+            ->call('updateRole', $targetUser->id, 'Admin')
+            ->assertSet('isLoading', false);
+
+        $this->assertTrue($targetUser->fresh()->hasRole('Admin'));
+    }
+
+    public function test_non_head_admin_cannot_update_role(): void
+    {
+        $superAdmin = User::factory()->create();
+        $superAdmin->assignRole('Super Admin');
+
+        $targetUser = User::factory()->create();
+        $targetUser->assignRole('Admin');
+
+        $this->actingAs($superAdmin);
+
+        $this->assertTrue(auth()->user()->hasRole('Super Admin'));
+        $this->assertFalse(auth()->user()->hasRole('Head Admin'));
+
+        Livewire::test(AkunCsIndex::class)
+            ->call('updateRole', $targetUser->id, 'Super Admin')
+            ->assertStatus(403);
+
+        $this->assertTrue($targetUser->fresh()->hasRole('Admin'));
+    }
 }
