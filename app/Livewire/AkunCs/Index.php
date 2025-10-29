@@ -8,9 +8,6 @@ use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
-use Spatie\Permission\Models\Role;
 
 class Index extends Component
 {
@@ -24,24 +21,11 @@ class Index extends Component
 
     protected Collection $chartPeriod;
 
-    public bool $showCreateModal = false;
-    public array $form = [];
-    public array $roles = [];
-
     /**
      * Menyiapkan data awal untuk komponen.
      */
     public function mount(): void
     {
-        $this->form = $this->initForm();
-        $this->roles = Role::whereIn("name", [
-            "Head Admin",
-            "Super Admin",
-            "Admin",
-        ])
-            ->pluck("name", "name")
-            ->all();
-
         $current = now();
         $periodStart = $current->copy()->subDays(6)->startOfDay();
         $periodEnd = $current->copy()->endOfDay();
@@ -127,71 +111,6 @@ class Index extends Component
     public function render(): View
     {
         return view("livewire.akun-cs.index")->layout("layouts.app");
-    }
-
-    protected function initForm(): array
-    {
-        return [
-            "name" => "",
-            "email" => "",
-            "role" => "Admin", // Role default
-            "password" => "",
-            "password_confirmation" => "",
-        ];
-    }
-
-    public function create(): void
-    {
-        $this->form = $this->initForm();
-        $this->resetErrorBag();
-        $this->showCreateModal = true;
-        $this->dispatch('open-create-modal');
-    }
-
-    public function saveUser(): void
-    {
-        $this->validate([
-            "form.name" => ["required", "string", "max:255"],
-            "form.email" => [
-                "required",
-                "string",
-                "email",
-                "max:255",
-                "unique:" . User::class . ",email",
-            ],
-            "form.role" => [
-                "required",
-                "string",
-                "exists:" . Role::class . ",name",
-            ],
-            "form.password" => [
-                "required",
-                "string",
-                Rules\Password::defaults(),
-                "confirmed",
-            ],
-        ]);
-
-        $user = User::create([
-            "name" => $this->form["name"],
-            "email" => $this->form["email"],
-            "password" => Hash::make($this->form["password"]),
-            "is_active" => true,
-        ]);
-
-        $user->assignRole($this->form["role"]);
-
-        $this->closeCreateModal();
-
-        $this->redirect(self::class, navigate: true);
-    }
-
-    public function closeCreateModal(): void
-    {
-        $this->showCreateModal = false;
-        $this->form = $this->initForm();
-        $this->resetErrorBag();
-        $this->dispatch('close-create-modal');
     }
 
     protected function generateChartValues(

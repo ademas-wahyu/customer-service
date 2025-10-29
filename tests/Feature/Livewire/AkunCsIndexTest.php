@@ -25,54 +25,6 @@ class AkunCsIndexTest extends TestCase
         Role::findOrCreate('Admin');
     }
 
-    public function test_create_opens_modal_and_resets_form(): void
-    {
-        $viewer = User::factory()->create();
-        $viewer->assignRole('Super Admin');
-
-        Livewire::actingAs($viewer)
-            ->test(AkunCsIndex::class)
-            ->set('form.name', 'Existing')
-            ->set('form.email', 'existing@vodeco.co.id')
-            ->set('form.role', 'Head Admin')
-            ->set('form.password', 'password')
-            ->call('create')
-            ->assertSet('form.name', '')
-            ->assertSet('form.email', '')
-            ->assertSet('form.role', 'Admin')
-            ->assertSet('showCreateModal', true)
-            ->assertDispatched('open-create-modal');
-    }
-
-    public function test_save_user_persists_account_and_closes_modal(): void
-    {
-        $viewer = User::factory()->create();
-        $viewer->assignRole('Super Admin');
-
-        Livewire::actingAs($viewer)
-            ->test(AkunCsIndex::class)
-            ->set('form.name', 'Raka Pratama')
-            ->set('form.email', 'raka@example.com')
-            ->set('form.role', 'Admin')
-            ->set('form.password', 'Password123!')
-            ->set('form.password_confirmation', 'Password123!')
-            ->call('saveUser')
-            ->assertHasNoErrors()
-            ->assertSet('showCreateModal', false)
-            ->assertDispatched('close-create-modal')
-            ->assertRedirect(route('akun-cs.index'));
-
-        $this->assertDatabaseHas('users', [
-            'email' => 'raka@example.com',
-            'name' => 'Raka Pratama',
-        ]);
-
-        $user = User::whereEmail('raka@example.com')->first();
-        $this->assertNotNull($user);
-        $this->assertTrue($user->hasRole('Admin'));
-        $this->assertTrue((bool) $user->is_active);
-    }
-
     public function test_guest_is_redirected_from_akun_cs_route(): void
     {
         $this->get(route('akun-cs.index'))
